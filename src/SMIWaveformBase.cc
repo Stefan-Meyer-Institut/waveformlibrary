@@ -110,8 +110,13 @@ std::ostream& operator<< (std::ostream &out, SMIWaveformBase &Wave){
       out << it->second[i] << " ";
     out << std::endl;
   }
-  out << "# ChannelName Q[coulomb] A[Volt] T[ns] ToT[ns] isDigital" << std::endl;
+  out << "# ChannelName";
   std::map<std::string, WaveForm>::iterator ch = Wave.channel.begin();
+  std::map<std::string, double>::iterator it2 = ch->second.result.begin();
+  for(;it2!=ch->second.result.end();it2++)
+    out << it2->first << " ";
+  out << "isDigital" << std::endl;
+
   for(;ch!=Wave.channel.end();ch++){
     out << ch->second << std::endl;
   }
