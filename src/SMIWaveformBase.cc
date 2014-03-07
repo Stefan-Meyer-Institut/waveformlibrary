@@ -100,11 +100,6 @@ std::map<std::string, WaveForm>::iterator search = trigger.find(Name);
 /**********************************************************/
 /***** operator functions *********************************/
 /**********************************************************/
-std::ostream& operator<< (std::ostream &out, WaveInfo &Info){
-  out << Info.Q << " " << Info.A << " " << Info.T << " " 
-      << Info.ToT << " " << Info.isDigital;
-  return out;
-}
 
 std::ostream& operator<< (std::ostream &out, SMIWaveformBase &Wave){
   out << "# Trigger to channel mapping" << std::endl;
