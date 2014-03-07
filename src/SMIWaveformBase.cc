@@ -70,19 +70,31 @@ bool SMIWaveformBase::addChannelTrigger(std::string chName, std::string trgName)
 /***** protected functions ********************************/
 /**********************************************************/
 bool SMIWaveformBase::addChannel(std::string Name){
-  std::map<std::string, WaveForm>::iterator search = channel.find(Name);
-  if(search != channel.end()) return false;
+  if(testChannel(Name)) return false;
   
   channel[Name] = WaveForm();
+  if(nEntries != 1024) channel[Name].resizeWave(nEntries);
   return true;
 }
 
 bool SMIWaveformBase::addTrigger(std::string Name){
-  std::map<std::string, WaveForm>::iterator search = trigger.find(Name);
-  if(search != trigger.end()) return false;
-  
+  if(testTrigger(Name)) return false;
+
   trigger[Name] = WaveForm();
+  if(nEntries != 1024) trigger[Name].resizeWave(nEntries);
   return true;
+}
+
+bool SMIWaveformBase::testChannel(std::string Name) {
+  std::map<std::string, WaveForm>::iterator search = channel.find(Name);
+  if(search != channel.end()) return true;
+  else return false;
+}
+
+bool SMIWaveformBase::testTrigger(std::string Name) {
+std::map<std::string, WaveForm>::iterator search = trigger.find(Name);
+  if(search != trigger.end()) return true;
+  else return false;
 }
 
 /**********************************************************/
