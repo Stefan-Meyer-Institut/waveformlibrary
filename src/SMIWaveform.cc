@@ -28,6 +28,26 @@ bool SMIWaveform::fillTrigger(std::string name, double *data){
   return true;
 }
 
+void SMIWaveform::changeTime(double time){
+  std::map<std::string, WaveForm>::iterator it;
+  for(it=channel.begin(); it!=channel.end(); it++)
+    it->second.setTimeBins(time);
+  
+  for(it=trigger.begin(); it!=trigger.end(); it++)
+    it->second.setTimeBins(time);  
+}
+
+inline bool SMIWaveform::shiftChannelTime(std::string name, double time){
+  if(!testChannel(name)) return false;
+  channel[name].shiftTime(time);
+  return true;
+}
+inline bool SMIWaveform::shiftTriggerTime(std::string name, double time){
+  if(!testTrigger(name)) return false;
+  trigger[name].shiftTime(time);
+  return true;
+}
+
 inline double SMIWaveform::getRand(double low, double high) const {
   return low+(high-low)*rand()/RAND_MAX;
 }

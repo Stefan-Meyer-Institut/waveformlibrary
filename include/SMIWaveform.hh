@@ -14,6 +14,10 @@ public:
   bool fillChannel(std::string name, double *data);
   bool fillTrigger(std::string name, double *data);
 
+  void changeTime(double time);
+  inline bool shiftChannelTime(std::string name, double time);
+  inline bool shiftTriggerTime(std::string name, double time);
+
   inline void setADCBits (size_t val) {adcBits  = val;}
   inline void setADCRange(size_t val) {adcRange = val;}
 

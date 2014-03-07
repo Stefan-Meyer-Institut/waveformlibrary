@@ -31,6 +31,9 @@ public:
   inline WaveInfo getInfo() const {return WaveInfo(Q,A,T,ToT,isDigital);}
   inline void setTimeBins(double _t){
     for(size_t i=0; i<t.size(); i++) t[i] = i*_t;}
+  inline void shiftTime(double _t){
+    for(size_t i=0; i<t.size(); i++) t[i] = t[i] + _t;}
+
   inline void resizeWave(size_t _s) {V.resize(_s); t.resize(_s);}
 
   std::vector<double> V;         // voltage [Volt]
