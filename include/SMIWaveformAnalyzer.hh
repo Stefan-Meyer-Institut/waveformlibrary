@@ -8,8 +8,9 @@
 
 class SMIWaveformAnalyzer : public SMIWaveform {
 public:
-  SMIWaveformAnalyzer();
-  ~SMIWaveformAnalyzer();
+  SMIWaveformAnalyzer() : SMIWaveform::SMIWaveform() {}
+  SMIWaveformAnalyzer(size_t nEntries) : SMIWaveform::SMIWaveform(nEntries) {}
+  //~SMIWaveformAnalyzer();
 
   bool processChannel(std::string name, SMIAnalyzerPluginList &plugins);
   bool processTrigger(std::string name, SMIAnalyzerPluginList &plugins);

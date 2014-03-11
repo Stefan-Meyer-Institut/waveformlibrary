@@ -18,8 +18,8 @@ public:
   inline bool shiftChannelTime(std::string name, double time);
   inline bool shiftTriggerTime(std::string name, double time);
 
-  inline void setADCBits (size_t val) {adcBits  = val;}
-  inline void setADCRange(size_t val) {adcRange = val;}
+  inline void setADCBits (size_t val) {adcBits  = val; adcDiff = adcRange/(1<<adcBits);}
+  inline void setADCRange(size_t val) {adcRange = val; adcDiff = adcRange/(1<<adcBits);}
 
 protected:
   inline double getRand(double low, double high) const;

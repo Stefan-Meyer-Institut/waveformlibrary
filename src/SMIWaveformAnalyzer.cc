@@ -1,11 +1,5 @@
 #include"SMIWaveformAnalyzer.hh"
 
-SMIWaveformAnalyzer::SMIWaveformAnalyzer(){
-}
-
-SMIWaveformAnalyzer::~SMIWaveformAnalyzer(){
-}
-
 bool SMIWaveformAnalyzer::processChannel(std::string name, 
 					 SMIAnalyzerPluginList &plugins) {
   bool ret = true;
@@ -28,4 +22,29 @@ bool SMIWaveformAnalyzer::processTrigger(std::string name,
     }
   }
   return ret;  
+}
+
+bool SMIWaveformAnalyzer::processAllChannels(SMIAnalyzerPluginList &plugins){
+  std::map<std::string, WaveForm>::iterator it;
+  bool ret = true;
+  for(it=channel.begin(); it!=channel.end(); it++){
+    if(!processChannel(it->first, plugins)) ret = false;
+  }
+  return ret;
+}
+
+bool SMIWaveformAnalyzer::processAllTriggers(SMIAnalyzerPluginList &plugins){
+ std::map<std::string, WaveForm>::iterator it;
+  bool ret = true;
+  for(it=trigger.begin(); it!=trigger.end(); it++){
+    if(!processTrigger(it->first, plugins)) ret = false;
+  }
+  return ret;
+}
+
+bool SMIWaveformAnalyzer::processAll(SMIAnalyzerPluginList &plugins){
+  bool ret = true;
+  if(!processAllChannels(plugins)) ret = false;
+  if(!processAllTriggers(plugins)) ret = false;
+  return ret;
 }
