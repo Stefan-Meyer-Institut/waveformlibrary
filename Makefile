@@ -1,14 +1,29 @@
 # Makefile
 progname = analyzer
 
+libdir = ./lib/
+libname = libwaveformanalyzer
+staticlib = $(libdir)$(libname).a
+dynamiclib = $(libdir)$(libname).so
+
 CXX = g++
-CXXFLAGS = -m64 -I./include/ -O0 -g -Wall -pedantic
+AR = ar
+CXXFLAGS = -m64 -I./include/ -O0 -g -Wall -pedantic -fPIC
 
 includes=$(wildcard ./include/*.hh)
 objects=$(patsubst %.cc,%.o,$(wildcard ./src/*.cc))
 
-$(progname): $(objects) $(progname).o
-	$(CXX) -o $(progname) $^ $(CXXFLAGS) $(LDFLAGS)
+all: $(progname) lib
+
+lib: $(objects)
+	@-mkdir -p $(libdir)
+	$(AR) -rs $(staticlib) $^ 
+	$(CXX) -o $(dynamiclib) $^ -shared
+
+$(progname): lib $(progname).o
+	$(CXX) -o $(progname) $(progname).o $(CXXFLAGS) $(LDFLAGS) $(staticlib)
+#$(progname): $(objects) $(progname).o
+#	$(CXX) -o $(progname) $^ $(CXXFLAGS) $(LDFLAGS)
 
 %.o: ./src/%.cc %.cc $(includes)
 	$(CXX) - $(CXXFLAGS)
@@ -16,3 +31,4 @@ $(progname): $(objects) $(progname).o
 clean:
 	rm $(objects) $(progname).o
 	rm $(progname)
+	rm -R ./lib/
