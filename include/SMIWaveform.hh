@@ -4,6 +4,14 @@
 #include<map>
 #include<string>
 
+#if __cplusplus >= 201103L
+#define CPP11
+#include <random>
+#else
+
+#endif
+
+
 #include"SMIWaveformBase.hh"
 
 class SMIWaveform : public SMIWaveformBase {
@@ -22,7 +30,7 @@ public:
   inline void setADCRange(size_t val) {adcRange = val; adcDiff = adcRange/(1<<adcBits);}
 
 protected:
-  inline double getRand(double low, double high) const;
+  inline double getRand(double low, double high);
 
   size_t adcBits;
   double adcRange;
@@ -30,6 +38,11 @@ protected:
 
 private:
   void initRand();
+#ifdef CPP11
+  std::random_device rd;
+  std::mt19937 gen;
+  std::uniform_real_distribution<double> dist;
+#endif
 };
 
 #endif

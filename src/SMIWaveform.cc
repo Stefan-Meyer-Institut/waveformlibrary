@@ -3,12 +3,20 @@
 #include<fstream>
 #include<ctime>
 
-SMIWaveform::SMIWaveform() : adcBits(12), adcRange(1.0) {
+SMIWaveform::SMIWaveform() : adcBits(12), adcRange(1.0)
+#ifdef CPP11
+			   ,dist(0,1)
+#endif
+ {
   initRand();
   adcDiff = adcRange/(1<<adcBits);
 }
 
-SMIWaveform::SMIWaveform(size_t _nEntries) : adcBits(12), adcRange(1.0) {
+SMIWaveform::SMIWaveform(size_t _nEntries) : adcBits(12), adcRange(1.0) 
+#ifdef CPP11
+			   ,dist(0,1)
+#endif
+{
   initRand();
   nEntries = _nEntries;
   adcDiff = adcRange/(1<<adcBits);
@@ -48,8 +56,13 @@ inline bool SMIWaveform::shiftTriggerTime(std::string name, double time){
   return true;
 }
 
-inline double SMIWaveform::getRand(double low, double high) const {
+inline double SMIWaveform::getRand(double low, double high) {
+  #ifdef CPP11
+  auto val = decltype(dist)::param_type(low,high);
+  return dist(gen,val);
+  #else
   return low+(high-low)*rand()/RAND_MAX;
+  #endif
 }
 
 void SMIWaveform::initRand(){
@@ -68,5 +81,12 @@ void SMIWaveform::initRand(){
     devrand = 0;
   randseedgen.close();
   unsigned int seconds = std::time(NULL); // current time in seconds since the epoch
+  
+  #ifdef CPP11
+  gen.seed(seconds xor devrand xor rd());
+  
+  #else
   std::srand(seconds xor devrand);
+
+  #endif
 }

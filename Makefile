@@ -8,7 +8,7 @@ dynamiclib = $(libdir)$(libname).so
 
 CXX = g++
 AR = ar
-CXXFLAGS = -m64 -I./include/ -O0 -g -Wall -pedantic -fPIC
+CXXFLAGS = -m64 -I./include/ -O0 -g -Wall -pedantic -fPIC --std=c++11
 
 includes=$(wildcard ./include/*.hh)
 objects=$(patsubst %.cc,%.o,$(wildcard ./src/*.cc))
