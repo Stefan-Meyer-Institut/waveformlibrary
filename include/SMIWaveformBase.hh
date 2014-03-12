@@ -20,6 +20,11 @@ public:
 
   friend std::ostream& operator<< (std::ostream &out, SMIWaveformBase &Wave);
 
+  std::map<std::string, WaveForm>                  channel; 
+  std::map<std::string, WaveForm>                  trigger; 
+  std::map<std::string, std::string>               channeltrigger;
+  std::map<std::string, std::vector<std::string> > triggerchannel;
+
 protected:
   bool addChannel(std::string Name);
   bool addTrigger(std::string Name);
@@ -27,10 +32,7 @@ protected:
   bool testChannel(std::string Name);
   bool testTrigger(std::string Name);
 
-  std::map<std::string, WaveForm>                  channel; 
-  std::map<std::string, WaveForm>                  trigger; 
-  std::map<std::string, std::string>               channeltrigger;
-  std::map<std::string, std::vector<std::string> > triggerchannel;
+
 
   unsigned int signalPattern;
   int          eventnum;

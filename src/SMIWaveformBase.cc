@@ -110,7 +110,7 @@ std::ostream& operator<< (std::ostream &out, SMIWaveformBase &Wave){
       out << it->second[i] << " ";
     out << std::endl;
   }
-  out << "# ChannelName";
+  out << "# ChannelName ";
   std::map<std::string, WaveForm>::iterator ch = Wave.channel.begin();
   std::map<std::string, double>::iterator it2 = ch->second.result.begin();
   for(;it2!=ch->second.result.end();it2++)
@@ -118,11 +118,18 @@ std::ostream& operator<< (std::ostream &out, SMIWaveformBase &Wave){
   out << "isDigital" << std::endl;
 
   for(;ch!=Wave.channel.end();ch++){
-    out << ch->second << std::endl;
+    out << ch->first << " " << ch->second << std::endl;
   }
 
-  for(ch = Wave.trigger.begin(); ch!= Wave.trigger.end(); ch++)
-    out << ch->second << std::endl;
+  ch = Wave.trigger.begin();
+  it2 = ch->second.result.begin();
+   out << "# TriggerName ";
+  for(;it2!=ch->second.result.end();it2++)
+    out << it2->first << " ";
+  out << "isDigital" << std::endl;
+
+  for(; ch!= Wave.trigger.end(); ch++)
+    out << ch->first << " " << ch->second << std::endl;
 
   return out;
 }

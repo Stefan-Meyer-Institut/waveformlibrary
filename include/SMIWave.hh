@@ -29,12 +29,12 @@ public:
   std::map<std::string, double> result;
   bool                          isDigital; // is a digital pulse
 
-  WaveForm& operator=(const WaveForm &right);
+  WaveForm& operator=(const WaveForm  &right);
   WaveForm& operator+=(const WaveForm &right);
-  WaveForm& operator+=(const double &right);
+  WaveForm& operator+=(const double   &right);
   WaveForm& operator-=(const WaveForm &right);
-  WaveForm& operator-=(const double &right);
-  WaveForm& operator*=(const double &right);
+  WaveForm& operator-=(const double   &right);
+  WaveForm& operator*=(const double   &right);
 
   friend WaveForm operator+(const WaveForm &left, const WaveForm &right);
   friend WaveForm operator+(const WaveForm &left, const double &right);
@@ -43,7 +43,6 @@ public:
   friend WaveForm operator*(const WaveForm &left, const double &right);
   friend std::ostream& operator<< (std::ostream &out, WaveForm &Info);
 
-  
 };
 
 #endif

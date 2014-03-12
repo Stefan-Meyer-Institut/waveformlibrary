@@ -10,7 +10,7 @@ objects=$(patsubst %.cc,%.o,$(wildcard ./src/*.cc))
 $(progname): $(objects) $(progname).o
 	$(CXX) -o $(progname) $^ $(CXXFLAGS) $(LDFLAGS)
 
-%.o: ./src/%.cc %.cc ${includes}
+%.o: ./src/%.cc %.cc $(includes)
 	$(CXX) - $(CXXFLAGS)
 
 clean:
