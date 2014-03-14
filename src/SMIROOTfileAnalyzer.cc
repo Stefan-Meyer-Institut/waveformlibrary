@@ -7,11 +7,11 @@
 #include"chaintools.hh"
 
 
-SMIROOTfileAnalyzer::SMIROOTfileAnalyzer(){
+SMIROOTfileAnalyzer::SMIROOTfileAnalyzer() : chain(NULL){
 
 }
 
-SMIROOTfileAnalyzer::SMIROOTfileAnalyzer(std::string configfile){
+SMIROOTfileAnalyzer::SMIROOTfileAnalyzer(std::string configfile) : chain(NULL){
   if(!readConfigFile(configfile)){
     std::cerr << "Couldn't open channel config file: " << configfile 
 	      << std::endl;
@@ -66,10 +66,7 @@ bool SMIROOTfileAnalyzer::associateTTreeBranches(){
   for(i=rootmapping.begin();i!=rootmapping.end(); i++){
     WaveForm &wave = getWaveForm(i->second);
     chain->SetBranchAddress(i->first.c_str(),&(wave.V[0]),branches[num++]);
-
-  }
-
-  
+  }  
   return true;
 }
 

@@ -19,6 +19,10 @@ public:
   SMIROOTfileAnalyzer(std::string configfile);
   bool readConfigFile(std::string configfile);
   bool associateTTreeBranches();
+  inline bool addFile(std::string name) {
+    if(chain != NULL){ chain->Add(name.c_str()); return true;}
+    return false;
+  }
 
   template<typename Func>
   bool loop(size_t start, size_t num, Func func){
