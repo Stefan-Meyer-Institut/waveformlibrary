@@ -32,7 +32,7 @@ protected:
   bool testChannel(std::string Name);
   bool testTrigger(std::string Name);
 
-
+  WaveForm& getWaveForm(std::string Name);
 
   unsigned int signalPattern;
   int          eventnum;

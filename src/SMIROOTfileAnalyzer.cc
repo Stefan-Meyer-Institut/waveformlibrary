@@ -3,6 +3,10 @@
 #include"SMIROOTfileAnalyzer.hh"
 #include<iostream>
 #include<cstdlib>
+
+#include"chaintools.hh"
+
+
 SMIROOTfileAnalyzer::SMIROOTfileAnalyzer(){
 
 }
@@ -28,17 +32,44 @@ bool SMIROOTfileAnalyzer::readConfigFile(std::string configfile){
   }
 
   char line[256];
-  std::string channel, trigger, rootname;
+  std::string command, channel, trigger, rootname;
+  bool chaincreated = false;
   do {
     if(ifile.peek()=='#') ifile.getline(line,255);
     else {
-      ifile >> rootname >> trigger >> channel;
-      rootmapping[channel] = rootname;
-      addChannelTrigger(channel,trigger);
+      ifile >> command;
+      if(command == "C"){
+	ifile >> rootname >> trigger >> channel;
+	rootmapping[channel] = rootname;
+	addChannelTrigger(channel,trigger);
+      } else if(command == "T"){
+	ifile >> rootname >> trigger;
+	rootmapping[trigger] = rootname;
+      } else if(command == "TreeName:" && !chaincreated) {
+	ifile >> channel;
+	chain = new TChain(channel.c_str());
+	chaincreated = true;
+      }	
     }
   } while(!ifile.eof());
 
   ifile.close();
+  if(!chaincreated) std::cerr << "WARNING no TChain was created!"
+			      << std::endl;
+  return true;
+}
+
+bool SMIROOTfileAnalyzer::associateTTreeBranches(){
+  std::map<std::string, std::string>::iterator i;
+  branches = std::vector<TBranch **>(rootmapping.size(), NULL);
+  size_t num=0;
+  for(i=rootmapping.begin();i!=rootmapping.end(); i++){
+    WaveForm &wave = getWaveForm(i->second);
+    chain->SetBranchAddress(i->first.c_str(),&(wave.V[0]),branches[num++]);
+
+  }
+
+  
   return true;
 }
 

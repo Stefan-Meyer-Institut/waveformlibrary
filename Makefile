@@ -6,9 +6,10 @@ libname = libwaveformanalyzer
 staticlib = $(libdir)$(libname).a
 dynamiclib = $(libdir)$(libname).so
 
-CXX = g++
+#CXX = g++
+CXX = clang++
 AR = ar
-CXXFLAGS = -m64 -I./include/ -O0 -g -Wall -pedantic -fPIC #--std=c++11
+CXXFLAGS = -m64 -I./include/ -O0 -g -Wall -pedantic -fPIC --std=c++11
 
 # test if ROOT is available
 ifdef ROOTSYS
@@ -20,7 +21,7 @@ objects=$(patsubst %.cc,%.o,$(wildcard ./src/*.cc))
 
 .PHONY : test
 
-all: $(progname) lib
+all: $(progname) lib test-bin
 
 -include $(objects:.o=.d)
 -include $(progname).d

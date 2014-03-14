@@ -22,6 +22,8 @@ public:
   bool fillChannel(std::string name, double *data);
   bool fillTrigger(std::string name, double *data);
 
+  void addRandomness(WaveForm &wave);
+
   void changeTime(double time);
   inline bool shiftChannelTime(std::string name, double time);
   inline bool shiftTriggerTime(std::string name, double time);

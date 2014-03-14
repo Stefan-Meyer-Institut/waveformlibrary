@@ -36,6 +36,11 @@ bool SMIWaveform::fillTrigger(std::string name, double *data){
   return true;
 }
 
+void SMIWaveform::addRandomness(WaveForm &wave){
+  for(size_t i=0; i<wave.V.size(); i++)
+    wave.V[i] += getRand(-adcDiff/2, adcDiff/2);
+}
+
 void SMIWaveform::changeTime(double time){
   std::map<std::string, WaveForm>::iterator it;
   for(it=channel.begin(); it!=channel.end(); it++)

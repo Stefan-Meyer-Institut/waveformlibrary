@@ -97,6 +97,11 @@ std::map<std::string, WaveForm>::iterator search = trigger.find(Name);
   else return false;
 }
 
+WaveForm& SMIWaveformBase::getWaveForm(std::string Name) {
+  if(testChannel(Name)) return channel[Name];
+  else return trigger[Name];
+}
+
 /**********************************************************/
 /***** operator functions *********************************/
 /**********************************************************/
