@@ -14,7 +14,6 @@ bool SMIWaveTests::test(){
   bool smiwaveformbase                 = testSMIWaveformBase();
   bool smiwaveform                     = testSMIWaveform();
   bool smiwaveformanalyzer             = testSMIWaveformAnalyzer();
-  bool smiwaveformanalyzerpluginsystem = testSMIWaveformAnalyzerPluginSystem();
 
   std::cerr << "SMIWave";
   if(smiwave) std::cerr << "\t\t working" << std::endl;
@@ -33,8 +32,8 @@ bool SMIWaveTests::test(){
   else std::cerr << "\t not working!" << std::endl;
 
 
-  if(smiwave && smiwaveformbase && smiwaveform && smiwaveformanalyzer 
-     && smiwaveformanalyzerpluginsystem) return true;
+  if(smiwave && smiwaveformbase && smiwaveform && smiwaveformanalyzer) 
+    return true;
   else return false;
 }
 
@@ -193,6 +192,3 @@ bool SMIWaveTests::testSMIWaveformAnalyzer(){
   else return false;
 }
 
-bool SMIWaveTests::testSMIWaveformAnalyzerPluginSystem(){
-  return true;
-}

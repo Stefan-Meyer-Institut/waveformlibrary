@@ -34,15 +34,16 @@ protected:
 
   size_t adcBits;
   double adcRange;
-  double adcDiff;
+  double adcDiff; 
 
 private:
   void initRand();
 #ifdef CPP11
   std::random_device rd;
-  std::mt19937 gen;
+  std::mt19937_64 gen;
   std::uniform_real_distribution<double> dist;
 #endif
 };
 
 #endif
+

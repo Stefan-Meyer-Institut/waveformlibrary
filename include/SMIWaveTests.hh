@@ -8,7 +8,6 @@ public:
   bool testSMIWaveformBase();
   bool testSMIWaveform();
   bool testSMIWaveformAnalyzer();
-  bool testSMIWaveformAnalyzerPluginSystem();
 };
 
 #endif
