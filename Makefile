@@ -8,7 +8,13 @@ dynamiclib = $(libdir)$(libname).so
 
 CXX = g++
 AR = ar
-CXXFLAGS = -m64 -I./include/ -O0 -g -Wall -pedantic -fPIC --std=c++11
+CXXFLAGS = -m64 -I./include/ -O0 -g -Wall -pedantic -fPIC #--std=c++11
+
+# test if ROOT is available
+ifdef ROOTSYS
+	CXXFLAGS += $(shell $(ROOTSYS)/bin/root-config --cflags) -D__HAVEROOT
+	LDFLAGS  += $(shell $(ROOTSYS)/bin/root-config --ldflags --libs)
+endif
 
 objects=$(patsubst %.cc,%.o,$(wildcard ./src/*.cc))
 
