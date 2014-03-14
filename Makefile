@@ -11,6 +11,9 @@ CXX = clang++
 AR = ar
 CXXFLAGS = -m64 -I./include/ -O0 -g -Wall -pedantic -fPIC --std=c++11
 
+DOXY := doxygen
+DOXYFILES := $(wildcard ./src/*.cc, ./include/*.hh)
+
 # test if ROOT is available
 ifdef ROOTSYS
 	CXXFLAGS += $(shell $(ROOTSYS)/bin/root-config --cflags) -D__HAVEROOT
@@ -19,7 +22,7 @@ endif
 
 objects=$(patsubst %.cc,%.o,$(wildcard ./src/*.cc))
 
-.PHONY : test
+.PHONY : test doc
 
 all: $(progname) lib test-bin
 
@@ -52,8 +55,12 @@ test: test-bin
 test-bin: lib ./test/test.o
 	$(CXX) -o ./test/test ./test/test.o $(CXXFLAGS) $(LDFLAGS) $(staticlib)
 
+doc:
+	$(DOXY) ./Doxyfile
+
 clean:
 	rm $(objects) $(progname).o *.d ./src/*.d
 	rm $(progname)
 	rm -R ./lib/
 	rm -R ./test/test
+	rm -R ./doc
