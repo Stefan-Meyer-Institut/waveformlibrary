@@ -1,6 +1,12 @@
 #include"SMIWaveformBase.hh"
 #include<algorithm>
 
+/*! 
+  \file SMIWaveformBase.cc
+  \brief functions to work on @ref SMIWaveformBase objects
+  \author Clemens Sauerzopf
+*/ 
+
 /**********************************************************/
 /***** public functions ***********************************/
 /**********************************************************/

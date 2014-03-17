@@ -1,4 +1,10 @@
 #include "chaintools.hh"
+#ifdef __HAVEROOT
+/*! 
+  \file chaintools.cc
+  \brief working with TChain objects
+  \author Clemens Sauerzopf
+*/ 
 
 namespace ChainTools {
   TChain *openchain(std::string chainname,std::vector<std::string> filename){
@@ -44,3 +50,5 @@ namespace ChainTools {
   }
 #endif
 }
+
+#endif

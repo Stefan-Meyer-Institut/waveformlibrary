@@ -58,7 +58,7 @@ public:
   is not found in the database
 
   @param channel name of the channel to add
-  @param name of the trigger for this channel
+  @param trigger of the trigger for this channel
   @return false id channel already exists, true otherwise
  */
   bool addChannelTrigger(std::string channel, std::string trigger);

@@ -1,5 +1,11 @@
 #ifdef __HAVEROOT
 
+/*! 
+  \file SMIROOTfileAnalyzer.cc
+  \brief analyze TTrees in CERN ROOT files
+  \author Clemens Sauerzopf
+*/ 
+
 #include"SMIROOTfileAnalyzer.hh"
 #include<iostream>
 #include<cstdlib>
@@ -60,6 +66,7 @@ bool SMIROOTfileAnalyzer::readConfigFile(std::string configfile){
 }
 
 bool SMIROOTfileAnalyzer::associateTTreeBranches(){
+  if(chain == NULL){ return false;}
   std::map<std::string, std::string>::iterator i;
   branches = std::vector<TBranch **>(rootmapping.size(), NULL);
   size_t num=0;

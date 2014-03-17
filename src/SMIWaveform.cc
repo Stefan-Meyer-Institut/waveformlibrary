@@ -1,4 +1,11 @@
 #include"SMIWaveform.hh"
+
+/*! 
+  \file SMIWaveform.cc
+  \brief functions to work on @ref SMIWaveform objects
+  \author Clemens Sauerzopf
+*/ 
+
 #include<cstdlib>
 #include<fstream>
 #include<ctime>

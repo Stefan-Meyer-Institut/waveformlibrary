@@ -1,8 +1,10 @@
 #ifndef __CHAINTOOLS_HH__
 #define __CHAINTOOLS_HH__
 
+#ifdef __HAVEROOT
 /*! \file chaintools.hh
     \brief functions to work with TChain objects
+    \author Clemens Sauerzopf
 */ 
 
 #include<TChain.h>
@@ -83,4 +85,5 @@ namespace ChainTools {
   std::vector<std::array<size_t, 2> > getfileboundry(TChain *chain);
 #endif
 }
+#endif
 #endif

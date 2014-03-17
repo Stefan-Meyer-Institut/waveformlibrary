@@ -3,6 +3,12 @@
 #include<limits>
 #include<cmath>
 
+/*! 
+  \file SMIWaveTests.cc
+  \brief functions to test the functionality of the library
+  \author Clemens Sauerzopf
+*/ 
+
 #include"SMIWave.hh"
 #include"SMIWaveformBase.hh"
 #include"SMIWaveform.hh"

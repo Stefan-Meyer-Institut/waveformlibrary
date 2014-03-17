@@ -3,6 +3,7 @@
 
 /*! \file SMIWaveform.hh
     \brief class for handling bunches of waveforms
+    \author Clemens Sauerzopf
 */ 
 
 #include<map>
@@ -22,7 +23,7 @@
   This class adds the possibilities to shift all waveforms at the same time,
   work with ADC information and randomize the binning effect of the ADC.
 
-  If you use C++11 the appropriate STL classes from <random> are used, if you
+  If you use C++11 the appropriate STL classes from random are used, if you
   use the old C++ standard the C style std::rand() function is used.
  */
 class SMIWaveform : public SMIWaveformBase {

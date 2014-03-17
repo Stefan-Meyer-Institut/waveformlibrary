@@ -1,6 +1,12 @@
 #include"SMIWave.hh"
 #include <exception>
 
+/*! 
+  \file SMIWave.cc
+  \brief functions to work on @ref WaveForm objects
+  \author Clemens Sauerzopf
+*/ 
+
 double WaveForm::interpolate(double _t) const {
   size_t above = 0;
   if(_t<=t[0]) return V[0];

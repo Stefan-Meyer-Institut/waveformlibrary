@@ -1,5 +1,11 @@
 #include"SMIWaveformAnalyzer.hh"
 
+/*! 
+  \file SMIWaveformAnalyzer.cc
+  \brief functions to work on @ref SMIWaveformAnalyzer objects
+  \author Clemens Sauerzopf
+*/ 
+
 bool SMIWaveformAnalyzer::processChannel(std::string name, 
 					 SMIAnalyzerPluginList &plugins) {
   bool ret = true;
