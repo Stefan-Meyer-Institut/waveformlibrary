@@ -14,6 +14,7 @@
 #include"SMIWaveform.hh"
 #include"SMIWaveformAnalyzerPluginSystem.hh"
 #include"SMIWaveformAnalyzer.hh"
+
 bool SMIWaveTests::test(){
   std::cerr << "Performing Waveform analyzer library unit tests" << std::endl;
   bool smiwave                         = testSMIWave();
@@ -176,11 +177,11 @@ bool SMIWaveTests::testSMIWaveformAnalyzer(){
   std::cerr << "... testing SMIWaveformAnalyzer class: \n";
 
   SMIAnalyzerPluginList *list2 = new SMIAnalyzerPluginList;
-  list2->add(new SMIAnalyzerPluginDummy(1));
-  list2->add(new SMIAnalyzerPluginDummy(2));
-  list2->add(new SMIAnalyzerPluginDummy(3));
-  list2->add(new SMIAnalyzerPluginDummy(4));
-  list2->add(new SMIAnalyzerPluginDummy(5));
+  list2->add(new plugin::SMIAnalyzerPluginDummy(1));
+  list2->add(new plugin::SMIAnalyzerPluginDummy(2));
+  list2->add(new plugin::SMIAnalyzerPluginDummy(3));
+  list2->add(new plugin::SMIAnalyzerPluginDummy(4));
+  list2->add(new plugin::SMIAnalyzerPluginDummy(5));
 
   SMIAnalyzerPluginList list = *list2;
   delete list2;

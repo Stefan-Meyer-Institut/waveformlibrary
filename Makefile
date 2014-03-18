@@ -21,15 +21,17 @@ ifdef ROOTSYS
 endif
 
 objects=$(patsubst %.cc,%.o,$(wildcard ./src/*.cc))
+plugins=$(patsubst %.cc,%.o,$(wildcard ./src/plugins/*.cc))
 
-.PHONY : test doc
+.PHONY : doc
 
-all: $(progname) lib test-bin
+all: $(progname) lib
 
 -include $(objects:.o=.d)
+-include $(plugins:.o=.d)
 -include $(progname).d
 
-lib: $(objects)
+lib: $(objects) $(plugins)
 	@-mkdir -p $(libdir)
 	$(AR) -rs $(staticlib) $^ 
 	$(CXX) -o $(dynamiclib) $^ -shared
@@ -59,7 +61,7 @@ doc:
 	$(DOXY) ./Doxyfile
 
 clean:
-	rm $(objects) $(progname).o *.d ./src/*.d
+	rm $(objects) $(plugins) $(progname).o *.d ./src/*.d
 	rm $(progname)
 	rm -R ./lib/
 	rm -R ./test/test

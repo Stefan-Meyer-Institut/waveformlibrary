@@ -116,17 +116,24 @@ public:
 
     for(size_t i=start; i<stop; i++){
       chain->GetEntry(i);
+      copyConvertData();
       func(*this);
     }
     return true;
   }
 
+  inline int getEventNum()    const {return eventnum; }
+  inline int getTriggerTime() const {return timestamp;}
 private:
+  //! copy temporary data to the waveforms and convert to double
+  void copyConvertData();
+
   std::map<std::string, std::string> rootmapping; //!< mapping between ROOT names and "real" channel names
 
   // managed by the ROOT garbage collector
-  std::vector<TBranch **> branches; //!< vectro of TBranch adresses
-  TChain *chain;                    //!< TChain pointer
+  std::vector<TBranch **>          branches; //!< vectro of TBranch adresses
+  std::vector<std::vector<float> > temp;     //!< temporary storage for values
+  TChain                          *chain;    //!< TChain pointer
 };
 
 #endif

@@ -71,10 +71,28 @@ bool SMIROOTfileAnalyzer::associateTTreeBranches(){
   branches = std::vector<TBranch **>(rootmapping.size(), NULL);
   size_t num=0;
   for(i=rootmapping.begin();i!=rootmapping.end(); i++){
-    WaveForm &wave = getWaveForm(i->second);
-    chain->SetBranchAddress(i->first.c_str(),&(wave.V[0]),branches[num++]);
+    temp.push_back(std::vector<float>(1024,0.0));
+    chain->SetBranchAddress(i->second.c_str(),&(temp[num][0]),branches[num]);
+    num++;
   }  
+  branches.push_back(NULL);
+  branches.push_back(NULL);
+  chain->SetBranchAddress("Eventnumber",&eventnum,branches[num++]);
+  chain->SetBranchAddress("TriggerTimestamp",&timestamp,branches[num++]);
   return true;
+}
+
+void SMIROOTfileAnalyzer::copyConvertData(){
+  std::map<std::string, std::string>::iterator i;
+  size_t num=0;
+  for(i=rootmapping.begin();i!=rootmapping.end(); i++){
+    WaveForm &wave = getWaveForm(i->first);
+    for(int j=0; j<nEntries; j++){
+      wave.V[j] = temp[num][j];
+    }
+    addRandomness(wave);
+    num++;
+  }
 }
 
 #endif

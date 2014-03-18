@@ -19,27 +19,52 @@ using std::tr1::shared_ptr;
 
 #include"SMIWave.hh"
 
-//! abstract base class for plugin system
+//! namespace for encapsulating plugins
 /*!
-  this class provides the basic functionality of a plugin, it is a functor 
-  that operates on a single @ref WaveForm. This class is pure virtual, so don't
-  try to use it directly, but ALL plugins need to inherit from this class.
+  all plugins should be part of this namespace
  */
-class SMIAnalyzerPluginBase {
-public:
-  //! standard constructor
-  SMIAnalyzerPluginBase(){}
-  
-  //! virtual standrad destructor
-  virtual ~SMIAnalyzerPluginBase(){};
-
-  //! function call operator
+namespace plugin {
+  //! abstract base class for plugin system
   /*!
-    this operator takes the reference to one @ref WaveForm as it's argument. 
-    When deriving a real plugin from this function needs to be provided.
-   */
-  virtual bool operator()(WaveForm &wave) = 0;
-};
+    this class provides the basic functionality of a plugin, it is a functor 
+    that operates on a single @ref WaveForm. This class is pure virtual, so don't
+    try to use it directly, but ALL plugins need to inherit from this class.
+  */
+  class SMIAnalyzerPluginBase {
+  public:
+    //! standard constructor
+    SMIAnalyzerPluginBase(){}
+  
+    //! virtual standrad destructor
+    virtual ~SMIAnalyzerPluginBase(){};
+
+    //! function call operator
+    /*!
+      this operator takes the reference to one @ref WaveForm as it's argument. 
+      When deriving a real plugin from this function needs to be provided.
+    */
+    virtual bool operator()(WaveForm &wave) = 0;
+  };
+
+  //! a simple dummy plugin for demonstration purposes
+  class SMIAnalyzerPluginDummy : public SMIAnalyzerPluginBase {
+  public:
+    //! standard constructor
+    SMIAnalyzerPluginDummy() : dummy(0) {}
+    //! constructor with 1 argument
+    SMIAnalyzerPluginDummy(int i) : dummy(i) {}
+    //! overloaded operator, the plugins functionality is implemented here
+    virtual bool operator()(WaveForm &wave) {
+      char tmp[20];
+      sprintf(tmp,"Test%i",dummy);
+      wave.result[tmp] = (double)dummy/10.;
+      return true;
+    }
+
+  private:
+    int dummy; //!< a variable
+  };
+}
 
 //! list of plugins
 /*!
@@ -72,40 +97,21 @@ public:
 
     @param plugin pointer to a plugin, use this with `new`
    */
-  inline void add(SMIAnalyzerPluginBase* plugin) 
-  {plugins.push_back(shared_ptr<SMIAnalyzerPluginBase>(plugin));}
+  inline void add(plugin::SMIAnalyzerPluginBase* plugin) 
+  {plugins.push_back(shared_ptr<plugin::SMIAnalyzerPluginBase>(plugin));}
 
   //! operator to access a plugin
   /*!
     @param pos position number of the plugin within the vector
     @return a shared pointer to the plugin
    */
-  inline shared_ptr<SMIAnalyzerPluginBase> & operator[](size_t pos) {return plugins[pos];}
+  inline shared_ptr<plugin::SMIAnalyzerPluginBase> & operator[](size_t pos) {return plugins[pos];}
   
   //! returns the number of plugins in the list
   inline size_t size() const {return plugins.size();}
 
 private:
-  std::vector<shared_ptr<SMIAnalyzerPluginBase> > plugins; //!< storage container for the plugin smart pointers
-};
-
-//! a simple dummy plugin for demonstration purposes
-class SMIAnalyzerPluginDummy : public SMIAnalyzerPluginBase {
-public:
-  //! standard constructor
-  SMIAnalyzerPluginDummy() : dummy(0) {}
-  //! constructor with 1 argument
-  SMIAnalyzerPluginDummy(int i) : dummy(i) {}
-  //! overloaded operator, the plugins functionality is implemented here
-  virtual bool operator()(WaveForm &wave) {
-    char tmp[20];
-    sprintf(tmp,"Test%i",dummy);
-    wave.result[tmp] = (double)dummy/10.;
-    return true;
-  }
-
-private:
-  int dummy; //!< a variable
+  std::vector<shared_ptr<plugin::SMIAnalyzerPluginBase> > plugins; //!< storage container for the plugin smart pointers
 };
 
 #endif
