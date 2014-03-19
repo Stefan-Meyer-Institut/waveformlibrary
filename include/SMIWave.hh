@@ -24,9 +24,9 @@ public:
   /*!
     The standard constructor initializes the Values to 0 and the 
     time axis to 1024 bins with 0.2 ns binwidth. It also assumes
-    that the pulse is not digital
+    that the pulse is negative
    */
-  WaveForm() : V(1024,0.0), t(1024,0.0), dT(0.2), isDigital(false) {
+  WaveForm() : V(1024,0.0), t(1024,0.0), dT(0.2), pulseType(-1) {
     for(size_t i=0; i<t.size(); i++) t[i] = i*0.2; // [ns] 1 bin = 200 ps
   }
 
@@ -69,7 +69,7 @@ public:
   double dT;                     //!< time bin width 
 
   std::map<std::string, double> result;    //!< map to store the results
-  bool                          isDigital; //!< is a digital pulse
+  int                           pulseType; //!< is a digital pulse
 
   WaveForm& operator=(const WaveForm  &right);
   WaveForm& operator+=(const WaveForm &right);

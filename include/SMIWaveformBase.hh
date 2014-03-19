@@ -63,6 +63,13 @@ public:
  */
   bool addChannelTrigger(std::string channel, std::string trigger);
 
+  //! return the eventnumber from the waveform digitiser
+  inline int getEventNum()    const {return eventnum; }
+  
+  //! return the trigger time tag from the waveform digitiser
+  inline int getTriggerTime() const {return timestamp;}
+
+
 //! simple output operator
 /*!
   this operator allows to dump a complete event including all results 

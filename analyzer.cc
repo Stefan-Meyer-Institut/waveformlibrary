@@ -1,8 +1,11 @@
+
 #include"SMIROOTfileAnalyzer.hh"
 #include"SMIWaveformAnalyzerPluginSystem.hh"
-
+#include"SMIWaveformAnalyzerProcessSystem.hh"
 //plugins
 #include"plugins/changeADCRange.hh"
+
+#include"SMIWaveformAnalyzerProcessSystem.hh"
 
 // STL 
 #include<iostream>
@@ -15,12 +18,12 @@ void someFunction(SMIROOTfileAnalyzer &wave){
   
 }
 
-class someOtherFunction {
+class someOtherFunction : public processBase {
 public:
   someOtherFunction(){
     list.add(new plugin::changeADCRange(1./4095));
   }
-  void operator()(SMIROOTfileAnalyzer &wave){
+  virtual void operator()(SMIWaveformAnalyzer &wave){
     wave.processAll(list);
 
     static int i=0; 
@@ -39,8 +42,16 @@ int main(int argc, char *argv[]){
   analyzer.setADCRange(4095);
   bool a = analyzer.associateTTreeBranches();
   std::cout << a << std::endl;
-  analyzer.loop(0,10,someFunction);
-  someOtherFunction f;
-  analyzer.loop(0,10,f);
+
+  processCalculateBaseline test;
+  analyzer.loop(200,100,test);
+  auto retval = test.getBaseline(analyzer);
+
+  for(auto i : retval){
+    std::cout << i.first  << " " << i.second << std::endl;
+  }
+
+  //someOtherFunction f;
+  //analyzer.loop(0,10,f);
   return 0;
 }

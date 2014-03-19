@@ -25,7 +25,7 @@ WaveForm& WaveForm::operator=(const WaveForm &right){
   V = right.V;
   t = right.t;
   result = right.result;
-  isDigital = right.isDigital;
+  pulseType = right.pulseType;
   return *this;
 }
 
@@ -105,6 +105,6 @@ std::ostream& operator<< (std::ostream &out, WaveForm &Info){
   std::map<std::string, double>::iterator it;
   for(it=Info.result.begin(); it!=Info.result.end(); it++)
     out << it->second << " ";
-  out << Info.isDigital;
+  out << Info.pulseType;
   return out;
 }

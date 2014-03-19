@@ -8,6 +8,7 @@
 
 #include"SMIWaveform.hh"
 #include"SMIWaveformAnalyzerPluginSystem.hh"
+#include"SMIWaveformAnalyzerProcessSystem.hh"
 #include<vector>
 
 //! base class for processing pluginslists
@@ -78,6 +79,8 @@ public:
     @return true if no error occured
    */
   bool processAll(SMIAnalyzerPluginList &plugins);
-
+  
+  //! loop function to process the events
+  virtual bool loop(size_t start, size_t num, processBase &func){return true;}
 };
 #endif
