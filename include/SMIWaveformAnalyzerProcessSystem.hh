@@ -47,7 +47,6 @@ public:
     for the single events. 
     @param wave reference to the waveform informations
    */
-
   virtual void operator()(SMIWaveformAnalyzer &wave);
 
   //! calculate the final pedestal informations
