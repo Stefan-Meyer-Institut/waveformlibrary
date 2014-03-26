@@ -2,6 +2,9 @@
 #include"SMIROOTfileAnalyzer.hh"
 #include"SMIWaveformAnalyzerPluginSystem.hh"
 #include"SMIWaveformAnalyzerProcessSystem.hh"
+
+#include"examples/include/processDemo.hh"
+
 //plugins
 #include"plugins/changeADCRange.hh"
 
@@ -46,10 +49,13 @@ int main(int argc, char *argv[]){
   processCalculateBaseline test;
   analyzer.loop(200,100,test);
   auto retval = test.getBaseline(analyzer);
+  processDemo demo;
+  demo.setBaseLine(retval);
+  analyzer.loop(200,100,demo);
 
-  for(auto i : retval){
+  /*  for(auto i : retval){
     std::cout << i.first  << " " << i.second << std::endl;
-  }
+    }*/
 
   //someOtherFunction f;
   //analyzer.loop(0,10,f);

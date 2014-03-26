@@ -12,7 +12,7 @@ namespace plugin {
   class leadingEdgeBasic : public SMIAnalyzerPluginBase {
   public:
     //! standard constructor
-    leadingEdgeBasic() : lowGate(20), highGate(40), threshold(40) {}
+    leadingEdgeBasic() : lowGate(10), highGate(70), threshold(0.04) {}
 
     leadingEdgeBasic(double low, double high, double thresh);
     //! operator that acts on the waveform

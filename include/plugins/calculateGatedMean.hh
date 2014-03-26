@@ -15,7 +15,7 @@ namespace plugin {
   class calculateGatedMean : public SMIAnalyzerPluginBase {
   public:
     //! standard constructor
-    calculateGatedMean() : lowGate(0), highGate(20){}
+    calculateGatedMean() : lowGate(0), highGate(10){}
     //! constructor with explicit low and high bounding value for the gate
     /*!
       @param low bounding value of the gate

@@ -7,8 +7,8 @@
 #include<iostream>
 
 processCalculateBaseline::processCalculateBaseline() : event(0){
-  //list.add(new plugin::cleanWaveForm     );
-  list.add(new plugin::calculateGatedMean);
+  list.add(new plugin::cleanWaveForm     );
+  list.add(new plugin::calculateGatedMean());
 }
 
 void processCalculateBaseline::operator()(SMIWaveformAnalyzer &wave){

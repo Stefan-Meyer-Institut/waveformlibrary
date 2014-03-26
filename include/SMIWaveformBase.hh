@@ -83,6 +83,15 @@ public:
   std::map<std::string, std::string>               channeltrigger; //!< mapping of channels to triggers
   std::map<std::string, std::vector<std::string> > triggerchannel; //!< mapping of triggers to channels
 
+//! returns a reference to a Waveform with Name
+/*!
+  use with care!
+
+  @param Name of the waveform (channel or trigger)
+  @return reference to the waveform
+ */
+  WaveForm& getWaveForm(std::string Name);
+
 protected:
 //! adds a channel to the database (don't use, use @ref addChannelTrigger instead)
   bool addChannel(std::string Name);
@@ -103,14 +112,6 @@ protected:
  */
   bool testTrigger(std::string Name);
 
-//! returns a reference to a Waveform with Name
-/*!
-  use with care!
-
-  @param Name of the waveform (channel or trigger)
-  @return reference to the waveform
- */
-  WaveForm& getWaveForm(std::string Name);
 
   unsigned int signalPattern; //!< signal pattern of the V1742 waveform digitiser
   int          eventnum;      //!< eventnumber   

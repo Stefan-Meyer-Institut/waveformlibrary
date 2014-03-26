@@ -9,7 +9,7 @@ dynamiclib = $(libdir)$(libname).so
 #CXX = g++
 CXX = clang++
 AR = ar
-CXXFLAGS = -m64 -I./include/ -O0 -g -Wall -pedantic -fPIC --std=c++11
+CXXFLAGS = -m64 -I./include/ -I./ -O0 -g -Wall -pedantic -fPIC --std=c++11
 
 DOXY := doxygen
 DOXYFILES := $(wildcard ./src/*.cc, ./include/*.hh)
@@ -22,6 +22,7 @@ endif
 
 objects=$(patsubst %.cc,%.o,$(wildcard ./src/*.cc))
 plugins=$(patsubst %.cc,%.o,$(wildcard ./src/plugins/*.cc))
+example=$(patsubst %.cc,%.o,$(wildcard ./examples/src/*.cc))
 
 .PHONY : doc
 
@@ -29,6 +30,7 @@ all: $(progname) lib
 
 -include $(objects:.o=.d)
 -include $(plugins:.o=.d)
+-include $(example:.o=.d)
 -include $(progname).d
 
 lib: $(objects) $(plugins)
@@ -36,8 +38,9 @@ lib: $(objects) $(plugins)
 	$(AR) -rs $(staticlib) $^ 
 	$(CXX) -o $(dynamiclib) $^ -shared
 
-$(progname): lib $(progname).o
-	$(CXX) -o $(progname) $(progname).o $(CXXFLAGS) $(LDFLAGS) $(staticlib)
+
+$(progname): lib $(progname).o $(example)
+	$(CXX) -o $(progname) $(progname).o $(example) $(CXXFLAGS) $(LDFLAGS) $(staticlib)
 #$(progname): $(objects) $(progname).o
 #	$(CXX) -o $(progname) $^ $(CXXFLAGS) $(LDFLAGS)
 
@@ -62,7 +65,7 @@ doc:
 
 clean:
 	rm $(objects) $(plugins) $(progname).o *.d ./src/*.d
-	rm $(progname)
+	rm ./src/plugins/*.d ./examples/src/*.d $(progname)
 	rm -R ./lib/
 	rm -R ./test/test
 	rm -R ./doc
