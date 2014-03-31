@@ -20,6 +20,13 @@ ifdef ROOTSYS
 	LDFLAGS  += $(shell $(ROOTSYS)/bin/root-config --ldflags --libs)
 endif
 
+# ROOTANA library for MIDAS
+rootanabase = /home/clemens/physicspackages/rootana
+rootanalib = $(rootanabase)/lib/librootana.a
+rootanainclude = -I$(rootanabase)/include
+CXXFLAGS += -D__HAVEMIDAS $(rootanainclude)
+
+
 objects=$(patsubst %.cc,%.o,$(wildcard ./src/*.cc))
 plugins=$(patsubst %.cc,%.o,$(wildcard ./src/plugins/*.cc))
 example=$(patsubst %.cc,%.o,$(wildcard ./examples/src/*.cc))
@@ -40,7 +47,7 @@ lib: $(objects) $(plugins)
 
 
 $(progname): lib $(progname).o $(example)
-	$(CXX) -o $(progname) $(progname).o $(example) $(CXXFLAGS) $(LDFLAGS) $(staticlib)
+	$(CXX) -o $(progname) $(progname).o $(example) $(CXXFLAGS) $(LDFLAGS) $(staticlib) $(rootanalib)
 #$(progname): $(objects) $(progname).o
 #	$(CXX) -o $(progname) $^ $(CXXFLAGS) $(LDFLAGS)
 

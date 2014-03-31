@@ -107,7 +107,6 @@ public:
     @param func function to execute (see description in @ref SMIROOTfileAnalyzer)
     @return true on success
    */
-
   virtual bool loop(size_t start, size_t num, processBase &func){
     size_t entries = chain->GetEntries();
     size_t stop = start+num;
