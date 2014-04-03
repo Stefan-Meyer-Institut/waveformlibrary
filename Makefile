@@ -9,7 +9,7 @@ dynamiclib = $(libdir)$(libname).so
 #CXX = g++
 CXX = clang++
 AR = ar
-CXXFLAGS = -m64 -I./include/ -I./ -O0 -g -Wall -pedantic -fPIC --std=c++11
+CXXFLAGS = -m64 -I./include/ -I./ -O3 -g -Wall -pedantic -fPIC --std=c++11
 
 DOXY := doxygen
 DOXYFILES := $(wildcard ./src/*.cc, ./include/*.hh)
@@ -17,7 +17,7 @@ DOXYFILES := $(wildcard ./src/*.cc, ./include/*.hh)
 # test if ROOT is available
 ifdef ROOTSYS
 	CXXFLAGS += $(shell $(ROOTSYS)/bin/root-config --cflags) -D__HAVEROOT
-	LDFLAGS  += $(shell $(ROOTSYS)/bin/root-config --ldflags --libs)
+	LDFLAGS  += $(shell $(ROOTSYS)/bin/root-config --ldflags --libs) -lMinuit2
 endif
 
 # ROOTANA library for MIDAS
@@ -25,7 +25,7 @@ rootanabase = /home/clemens/physicspackages/rootana
 rootanalib = $(rootanabase)/lib/librootana.a
 rootanainclude = -I$(rootanabase)/include
 CXXFLAGS += -D__HAVEMIDAS $(rootanainclude)
-
+LDFLAGS += -lz
 
 objects=$(patsubst %.cc,%.o,$(wildcard ./src/*.cc))
 plugins=$(patsubst %.cc,%.o,$(wildcard ./src/plugins/*.cc))

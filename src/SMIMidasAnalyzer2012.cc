@@ -5,16 +5,82 @@
 #include"TMidasEvent.h"
 #include<cstdio>
 #include<algorithm>
+#include<iostream>
 
 bool SMIMidasAnalyzer2012::loop(size_t start, size_t num, processBase &func){
+  size_t end=start+num;
+  if(start >= rawMidasEvent.size()) return false;
+  if(end   >= rawMidasEvent.size()) end=rawMidasEvent.size();
+
+  //std::cout << start << " "<< end << " " << rawMidasEvent.size()<<std::endl;
+  for(size_t i=start; i<end; i++){
+    loadEvent(i);
+    
+    func(*this);
+  }
+
   return true;
 }
 
 bool SMIMidasAnalyzer2012::readConfigFile(std::string configfile){
+  std::ifstream ifile(configfile.c_str());
+  if(!ifile) return false;
+  ifile.seekg (0, ifile.end);
+  int length = ifile.tellg();
+  ifile.seekg (0, ifile.beg);
+  if(length == 0){
+    std::cerr << "File is empty!" << std::endl;
+    return false;
+  }
+
+  char line[256];
+  std::string command, ch, trig, bankname;
+  int pulse;
+  do {
+    if(ifile.peek()=='#') ifile.getline(line,255);
+    else {
+      ifile >> command;
+      if(command == "C"){
+	ifile >> bankname >> ch >> trig >> pulse;
+	midasChannelBanks[bankname] = ch;
+	addChannelTrigger(ch,trig);
+	channel[ch].pulseType = pulse;
+      } else if(command == "T"){
+	ifile >> bankname >> trig >> pulse;
+	midasChannelBanks[bankname] = trig;
+	trigger[trig].pulseType = pulse;
+      } 
+    }
+  } while(!ifile.eof());
+  
+  ifile.close();
   return true;
+
 }
 
 bool SMIMidasAnalyzer2012::loadEvent(size_t num){
+  if(num >= rawMidasEvent.size() ) return false;
+
+  for(std::map<std::string,std::string>::iterator it=midasChannelBanks.begin();
+      it != midasChannelBanks.end(); it++){
+    int chadcnum=0, grnum = 0, chnum = 0;
+    if(it->first[3]=='T'){
+      sscanf(it->first.c_str(),"A%c%c",(char*)&chadcnum,(char*)&grnum);
+      chadcnum-=48;
+      grnum -= 48;
+      chnum = 8;
+      fillTrigger(it->second,rawMidasEvent[num][chadcnum].group[grnum].data[chnum]);
+    } else {
+      sscanf(it->first.c_str(),"A%c%c%c",(char*)&chadcnum,(char*)&grnum, (char*)&chnum);
+      chadcnum -= 48;
+      grnum    -= 48;
+      chnum    -= 48;
+      fillChannel(it->second,rawMidasEvent[num][chadcnum].group[grnum].data[chnum]);
+    }
+    eventnum=rawMidasEvent[num][chadcnum].header.event_counter;
+    timestamp=rawMidasEvent[num][chadcnum].group[grnum].groupHeader.grtime;
+  }
+
   return true;
 }
 
@@ -26,10 +92,15 @@ bool SMIMidasAnalyzer2012::prepareMidasEvent(TMidasEvent &event){
     // get group headers
     char name[128];
     int chadcnum=0, grnum = 0, chnum = 0;
-    sscanf(it->first.c_str(),"A%i%i%i",&chadcnum,&grnum, &chnum);
+    if(it->first[3]=='T') continue;
+    sscanf(it->first.c_str(),"A%c%c%c",(char*)&chadcnum,(char*)&grnum, (char*)&chnum);
+    chadcnum-=48;
+    grnum-=48;
+    chnum-=48;
     sprintf(name,"A%i%iH",chadcnum,grnum);
     groupheaders.push_back(name);
     sprintf(name,"A%iEH",chadcnum);
+    //std::cout << it->first.c_str() << " " << name << " " << chadcnum << std::endl;
     eventheaders.push_back(name);
   }
   std::sort(groupheaders.begin(),groupheaders.end());
@@ -44,14 +115,17 @@ bool SMIMidasAnalyzer2012::prepareMidasEvent(TMidasEvent &event){
 
   std::map<int,double **> groupdata;
   std::map<int,int> subevent;
+			       
   for(std::vector<std::string>::iterator it=eventheaders.begin(); it!=lastevent; it++){
     int c = event.LocateBank(NULL, it->c_str(), &ptr);
     int adcnum = 0;
-    sscanf(it->c_str(),"A%nEH",&adcnum);
-      
+    sscanf(it->c_str(),"A%cEH",(char*)&adcnum);
+    adcnum-=48;
+    //std::cout << it->c_str() <<" ADCNUM = " << adcnum << std::endl;
     // decode event header information
-    adcHeader[adcnum] = decodeEventHeader(ptr,c);
+    if(c==0) return true;
     subevents = c/20;
+    adcHeader[adcnum] = decodeEventHeader(ptr,subevents);
     subevent [adcnum] = subevents;
     // decode group header information
 
@@ -61,18 +135,23 @@ bool SMIMidasAnalyzer2012::prepareMidasEvent(TMidasEvent &event){
       WORD *data[9];
       int entr = event.LocateBank(NULL, git->c_str(), &ptr);
       int gnum = 0;
-      sscanf(it->c_str(),"A%i%i",&adcnum, &gnum);
-
+      sscanf(git->c_str(),"A%c%cH",(char*)&adcnum, (char*)&gnum);
+      //std::cout << git->c_str() << " " << adcnum << " " << gnum << std::endl;
+      adcnum -= 48;
+      gnum -= 48;
       int groupnumber = (adcnum<<2) + gnum;
 
-      adcgroups[groupnumber] = decodeGroupHeader(ptr,entr);  
+      adcgroups[groupnumber] = decodeGroupHeader(ptr,subevents);  
       
       // decode channels
       char name[128];
       for(int channel=0; channel<9; channel++){
 	if(channel == 8)  sprintf(name,"A%i%iT",adcnum,gnum);
 	else sprintf(name,"A%i%i%i",adcnum,gnum,channel);
+	
 	event.LocateBank(NULL, name, (void**)&data[channel]);
+	//std::cout << name << " "<<  <<std::endl; 
+	//std::cout << data[channel][0] << std::endl;
       }
 
       if(groupdata[(adcnum<<2) + gnum] == NULL){
@@ -90,29 +169,35 @@ bool SMIMidasAnalyzer2012::prepareMidasEvent(TMidasEvent &event){
       short *cell, *nsample;
       sprintf(name,"A%i%iC",adcnum,gnum);
       event.LocateBank(NULL, name, (void**)&cell);
+      //std::cout << name  << " "<< << std::endl;
       sprintf(name,"A%i%iN",adcnum,gnum);
+      //std::cout << name << std::endl;
       event.LocateBank(NULL, name, (void**)&nsample);
       sprintf(name,"A%i%iM",adcnum,gnum);
       event.LocateBank(NULL, name, (void**)&timecorr);
+      //std::cout << name <<" "<<  << std::endl;
+      //std::cout << cell[0] << " "  << std::endl;
 
       
       // build correction table
       V1742::V1742_DataCorrection_t CTable;
-      for(int k=0;k<1024;k++)
-	CTable.time[k] = timecorr[k];
+      //std::cout << CTable.time << std::endl << std::flush;
+      for(int k=0;k<1024;k++){
+      	CTable.time[k] = timecorr[k];
+      }
       for(int k=0; k<9; k++){	  
-	for(int l=0;l<1024;l++){
-	  CTable.cell[k][l] = cell[1024*k+l];
-	  CTable.nsample[k][l] = nsample[1024*k+l];
-	}
+      	for(int l=0;l<1024;l++){
+      	  CTable.cell[k][l] = cell[1024*k+l];
+      	  CTable.nsample[k][l] = nsample[1024*k+l];
+      	}
       }
       
-      // apply calibration pattern
+      // // apply calibration pattern
       double **tmp = new double*[9];
       for(int n=0; n<subevents; n++){
-	for(int ch=0; ch<9; ch++)
-	  tmp[ch] = groupdata[groupnumber][ch] + n*1024;
-	V1742::ApplyDataCorrection(&CTable, 0, 7, &(adcgroups[groupnumber][n]), tmp);
+      	for(int ch=0; ch<9; ch++)
+      	  tmp[ch] = groupdata[groupnumber][ch] + n*1024;
+      	V1742::ApplyDataCorrection(&CTable, 0, 7, &(adcgroups[groupnumber][n]), tmp);
       }
       delete [] tmp;
     } // group loop end
@@ -129,14 +214,16 @@ bool SMIMidasAnalyzer2012::prepareMidasEvent(TMidasEvent &event){
     std::vector<std::string>::iterator git=groupheaders.begin();
     for(; it!=lastevent; it++){
       int adcnum = 0;
-      sscanf(it->c_str(),"A%nEH",&adcnum);
+      sscanf(it->c_str(),"A%cEH",(char*)&adcnum);
+      adcnum -= 48;
       eventmatch[adcnum].header = adcHeader[adcnum][e];
       for(;git!=lastgroup; git++){
 	int gnum = 0;
-	sscanf(it->c_str(),"A%i%i",&adcnum, &gnum);
-
+	sscanf(git->c_str(),"A%c%c",(char*)&adcnum, (char*)&gnum);
+	adcnum -= 48;
+	gnum -= 48;
 	int groupnumber = (adcnum<<2) + gnum;
-	eventmatch[adcnum].group[gnum].groupHeader=adcgroups[groupnumber][e];
+	eventmatch[adcnum].group[gnum].groupHeader = adcgroups[groupnumber][e];
 	for(int i=0; i<9; i++)
 	  std::memcpy(eventmatch[adcnum].group[gnum].data[i],groupdata[groupnumber][i] + 1024*e, 1024*sizeof(double));
       }
@@ -155,12 +242,12 @@ bool SMIMidasAnalyzer2012::prepareMidasEvent(TMidasEvent &event){
       delete [] it->second;
     }
   }
-
+  matchEvents();
   return true;
 }
 
 int SMIMidasAnalyzer2012::matchEvents(){
-
+  std::cout << "eventcounter: " << rawMidasEvent.size() << std::endl;
   if(unmatchedMidasEvent.size()==0) return true;
   if(unmatchedMidasEvent[0].size()==1){ // don't do matching of we only have on ADC
     for(int i=0; i<unmatchedMidasEvent.size(); i++){
@@ -225,6 +312,7 @@ V1742::sheader *SMIMidasAnalyzer2012::decodeEventHeader(void *ptr, size_t size){
     retval[event].event_counter = *(unsigned int*)(data);
     data += sizeof(unsigned int);
     retval[event].event_time_tag = *(unsigned int*)(data);
+ 
     data += sizeof(unsigned int);
     event++;
   }

@@ -32,7 +32,7 @@ SMIWaveform::SMIWaveform(size_t _nEntries) : adcBits(12), adcRange(1.0)
 bool SMIWaveform::fillChannel(std::string name, double *data){
   if(!testChannel(name)) return false;
   for(size_t i=0; i<channel[name].V.size(); i++)
-    channel[name].V[i] = data[i] + getRand(-adcDiff/2, adcDiff/2);
+    channel[name].V[i] = data[i] /*+ getRand(-adcDiff/2, adcDiff/2)*/;
   return true;
 }
 

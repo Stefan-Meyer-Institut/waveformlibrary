@@ -16,13 +16,17 @@ class TMidasEvent;
 
 class SMIMidasAnalyzer2012 : public SMIWaveformAnalyzer{
 public:
-  SMIMidasAnalyzer2012() : subevents(0) {}
+  SMIMidasAnalyzer2012() : subevents(0), srad(5), ADCNum(0),timeDiff(10.0) {}
+  SMIMidasAnalyzer2012(std::string configfile) : subevents(0), srad(5), ADCNum(0),timeDiff(10.0) 
+  {readConfigFile(configfile);}
 
   virtual bool loop(size_t start, size_t num, processBase &func);
   bool readConfigFile(std::string configfile);
   bool loadEvent(size_t num);
   bool prepareMidasEvent(TMidasEvent &event);
 
+  inline void purgeEvents(size_t num) {if(rawMidasEvent.size()>num) 
+      rawMidasEvent.erase(rawMidasEvent.begin(),rawMidasEvent.begin()+num);};
 private:
   int matchEvents();
 
