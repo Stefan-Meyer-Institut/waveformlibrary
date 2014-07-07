@@ -8,9 +8,9 @@
 
 #include<fstream>
 
-class processDemo : public processBase {
+class processOneBar : public processBase {
 public:
-  processDemo();
+  processOneBar();
   virtual void operator()(SMIWaveformAnalyzer &wave);
   inline void setBaseLine(std::map<std::string, double> &_baseline){
     baseline = _baseline;}

@@ -4,7 +4,7 @@
 #include"SMIWaveformAnalyzerPluginSystem.hh"
 #include"SMIWaveformAnalyzerProcessSystem.hh"
 
-#include"examples/include/processDemo.hh"
+#include"examples/include/processonebar.hh"
 
 //plugins
 #include"plugins/changeADCRange.hh"
@@ -14,17 +14,18 @@
 // STL 
 #include<iostream>
 
+// midas
 #include <TMidasFile.h>
 #include <TMidasEvent.h>
 
 int main(int argc, char *argv[]){
 
   TMidasFile f;
-  //f.Open("run00030.mid");
-  f.Open("../test1/run00029.mid");
+  f.Open("run00001.mid");
+  //f.Open("../test1/run00029.mid");
   SMIMidasAnalyzer2012 analyzer("midasconfigexample.conf");
   analyzer.setADCRange(4095);
-  processDemo demo;
+  processOneBar demo;
   processCalculateBaseline test;
   while (1) {
     TMidasEvent event;
@@ -42,7 +43,7 @@ int main(int argc, char *argv[]){
       if (eventId == 1) { // FADC
 	//event.Print();
 	std::cout << "midas eventnumber: " << event.GetSerialNumber() << std::endl;
-	if( event.GetSerialNumber() >= 50) break;
+	//if( event.GetSerialNumber() >= 20) break;
 	analyzer.prepareMidasEvent(event);
 	
 	//analyzer.loop(10,100,test); 

@@ -78,95 +78,107 @@ processDemo::processDemo() : event(0), h(NULL), h2(NULL) {
   h2[14] = new TH2D("","",400,0,100,400,0,100);
   h2[15] = new TH2D("","",400,0,100,400,0,100);
 
+  h4 = new TH2D*[4];
+  h4[0] = new TH2D("","",200,0,200,200,0,1);
+  h4[1] = new TH2D("","",200,0,200,200,0,1);
+  h4[2] = new TH2D("","",200,0,200,200,0,1);
+  h4[3] = new TH2D("","",200,0,200,200,0,1);
 }
 
 void processDemo::operator()(SMIWaveformAnalyzer &wave){
   //subtractBaseLine(wave);
   wave.processAll(list);
-
+  printEvent(wave);
+  
   double qscalefactor1d = 15.56/12.26;
   double qscalefactor1u = 15.56/15.09;
   double qscalefactor2d = 15.56/17.14;
-  wave.channel["IFES1d"].result["Q"] *= qscalefactor1d;
-  wave.channel["IFES1u"].result["Q"] *= qscalefactor1u;
-  wave.channel["IFES2d"].result["Q"] *= qscalefactor2d;
+  // wave.channel["IFES1d"].result["Q"] *= qscalefactor1d;
+  // wave.channel["IFES1u"].result["Q"] *= qscalefactor1u;
+  // wave.channel["IFES2d"].result["Q"] *= qscalefactor2d;
 
   qscalefactor1d = 0.2224/0.1858;
   qscalefactor1u = 0.2224/0.2287;
   qscalefactor2d = 0.2224/0.257;
 
-  wave.channel["IFES1d"].result["A"] *= qscalefactor1d;
-  wave.channel["IFES1u"].result["A"] *= qscalefactor1u;
-  wave.channel["IFES2d"].result["A"] *= qscalefactor2d;
+  // wave.channel["IFES1d"].result["A"] *= qscalefactor1d;
+  // wave.channel["IFES1u"].result["A"] *= qscalefactor1u;
+  // wave.channel["IFES2d"].result["A"] *= qscalefactor2d;
 
-  h[ 0]->Fill(wave.channel["IFES1d"].result["Q"]);
-  h[ 1]->Fill(wave.channel["IFES1u"].result["Q"]);
-  h[ 2]->Fill(wave.channel["IFES2d"].result["Q"]);
-  h[ 3]->Fill(wave.channel["IFES2u"].result["Q"]);
 
-  double t1 = std::abs(wave.channel["IFES1d"].result["CF--3.00"] 
-		      - wave.trigger[wave.channeltrigger["IFES1d"]].result["CF--3.00"]);
-  double t2 = std::abs(wave.channel["IFES1u"].result["CF--3.00"] 
-		      - wave.trigger[wave.channeltrigger["IFES1u"]].result["CF--3.00"]);
+  h[ 0]->Fill(wave.channel["TopR"].result["Q"]);
+  h[ 1]->Fill(wave.channel["TopL"].result["Q"]);
+  //h[ 2]->Fill(wave.channel["IFES2d"].result["Q"]);
+  //h[ 3]->Fill(wave.channel["IFES2u"].result["Q"]);
 
-  double t3 = std::abs(wave.channel["IFES2d"].result["CF--3.00"] 
-		      - wave.trigger[wave.channeltrigger["IFES2d"]].result["CF--3.00"]);
+  //h4[0]->Fill(wave.channel["IFESD1d"].result["LEToT"],wave.channel["IFES1d"].result["A"]);
+  //h4[1]->Fill(wave.channel["IFESD1u"].result["ToT"],wave.channel["IFES1u"].result["Q"]);
+  //h4[2]->Fill(wave.channel["IFESD2d"].result["LEToT"],wave.channel["IFES2d"].result["A"]);
+  //h4[3]->Fill(wave.channel["IFESD2u"].result["LEToT"],wave.channel["IFES2u"].result["A"]);
 
-  double t4 = std::abs(wave.channel["IFES2u"].result["CF--3.00"] 
-		      - wave.trigger[wave.channeltrigger["IFES2u"]].result["CF--3.00"]);
+  // double t1 = std::abs(wave.channel["IFES1d"].result["CF--3.00"] 
+  // 		      - wave.trigger[wave.channeltrigger["IFES1d"]].result["CF--3.00"]);
+  // double t2 = std::abs(wave.channel["IFES1u"].result["CF--3.00"] 
+  // 		      - wave.trigger[wave.channeltrigger["IFES1u"]].result["CF--3.00"]);
 
-  h[ 4]->Fill((t1+t2)/2);
-  h[ 5]->Fill((t3+t4)/2);
-  h[ 6]->Fill((t1+t2)/2 - (t3+t4)/2);
-  h[ 7]->Fill(((t1+t2)/2 + (t3+t4)/2)/2);
+  // double t3 = std::abs(wave.channel["IFES2d"].result["CF--3.00"] 
+  // 		      - wave.trigger[wave.channeltrigger["IFES2d"]].result["CF--3.00"]);
 
-  h[ 8]->Fill(wave.channel["IFES1d"].result["A"]);
-  h[ 9]->Fill(wave.channel["IFES1u"].result["A"]);
-  h[10]->Fill(wave.channel["IFES2d"].result["A"]);
-  h[11]->Fill(wave.channel["IFES2u"].result["A"]);
+  // double t4 = std::abs(wave.channel["IFES2u"].result["CF--3.00"] 
+  // 		      - wave.trigger[wave.channeltrigger["IFES2u"]].result["CF--3.00"]);
 
-  double q1d =wave.channel["IFES1d"].result["Q"];
-  double q1u =wave.channel["IFES1u"].result["Q"];
-  double q2d =wave.channel["IFES2d"].result["Q"];
-  double q2u =wave.channel["IFES2u"].result["Q"];
+  // h[ 4]->Fill((t1+t2)/2);
+  // h[ 5]->Fill((t3+t4)/2);
+  // h[ 6]->Fill((t1+t2)/2 - (t3+t4)/2);
+  // h[ 7]->Fill(((t1+t2)/2 + (t3+t4)/2)/2);
 
-  double a1d =wave.channel["IFES1d"].result["A"];
-  double a1u =wave.channel["IFES1u"].result["A"];
-  double a2d =wave.channel["IFES2d"].result["A"];
-  double a2u =wave.channel["IFES2u"].result["A"];
+  // h[ 8]->Fill(wave.channel["IFES1d"].result["A"]);
+  // h[ 9]->Fill(wave.channel["IFES1u"].result["A"]);
+  // h[10]->Fill(wave.channel["IFES2d"].result["A"]);
+  // h[11]->Fill(wave.channel["IFES2u"].result["A"]);
 
-  h[12]->Fill((q1d+q1u)/2);
-  h[13]->Fill((q2d+q2u)/2);
+  // double q1d =wave.channel["IFES1d"].result["Q"];
+  // double q1u =wave.channel["IFES1u"].result["Q"];
+  // double q2d =wave.channel["IFES2d"].result["Q"];
+  // double q2u =wave.channel["IFES2u"].result["Q"];
 
-  h[14]->Fill((t1+t2)/2);
-  h[15]->Fill((t3+t4)/2);
+  // double a1d =wave.channel["IFES1d"].result["A"];
+  // double a1u =wave.channel["IFES1u"].result["A"];
+  // double a2d =wave.channel["IFES2d"].result["A"];
+  // double a2u =wave.channel["IFES2u"].result["A"];
+
+  // h[12]->Fill((q1d+q1u)/2);
+  // h[13]->Fill((q2d+q2u)/2);
+
+  // h[14]->Fill((t1+t2)/2);
+  // h[15]->Fill((t3+t4)/2);
     
-  h3[0]->Fill( ((q1d+q1u)/2 - (q2d+q2u)/2) / ((q1d+q1u)/2 + (q2d+q2u)/2) );
-  //std::cerr << (q1d+q1u)/2 << " " << (q2d+q2u)/2 << " " << ((q1d+q1u)/2 - (q2d+q2u)/2) / ((q1d+q1u)/2 + (q2d+q2u)/2) << std::endl;
+  // h3[0]->Fill( ((q1d+q1u)/2 - (q2d+q2u)/2) / ((q1d+q1u)/2 + (q2d+q2u)/2) );
+  // //std::cerr << (q1d+q1u)/2 << " " << (q2d+q2u)/2 << " " << ((q1d+q1u)/2 - (q2d+q2u)/2) / ((q1d+q1u)/2 + (q2d+q2u)/2) << std::endl;
 
-  h3[1]->Fill( ((a1d+a1u)/2 - (a2d+a2u)/2) / ((a1d+a1u)/2 + (a2d+a2u)/2) );
+  // h3[1]->Fill( ((a1d+a1u)/2 - (a2d+a2u)/2) / ((a1d+a1u)/2 + (a2d+a2u)/2) );
 
-  h2[ 0]->Fill((t1+t2)/2,(wave.channel["IFES1d"].result["Q"] + wave.channel["IFES1u"].result["Q"])/2);
-  h2[ 1]->Fill((t3+t4)/2,(wave.channel["IFES2d"].result["Q"] + wave.channel["IFES2u"].result["Q"])/2);
+  // h2[ 0]->Fill((t1+t2)/2,(wave.channel["IFES1d"].result["Q"] + wave.channel["IFES1u"].result["Q"])/2);
+  // h2[ 1]->Fill((t3+t4)/2,(wave.channel["IFES2d"].result["Q"] + wave.channel["IFES2u"].result["Q"])/2);
 
-  h2[ 2]->Fill((t1+t2)/2,(wave.channel["IFES1d"].result["A"] + wave.channel["IFES1u"].result["A"])/2);
-  h2[ 3]->Fill((t3+t4)/2,(wave.channel["IFES2d"].result["A"] + wave.channel["IFES2u"].result["A"])/2);
+  // h2[ 2]->Fill((t1+t2)/2,(wave.channel["IFES1d"].result["A"] + wave.channel["IFES1u"].result["A"])/2);
+  // h2[ 3]->Fill((t3+t4)/2,(wave.channel["IFES2d"].result["A"] + wave.channel["IFES2u"].result["A"])/2);
 
-  h2[ 4]->Fill(t1,(wave.channel["IFES1d"].result["Q"] ));
-  h2[ 5]->Fill(t2,(wave.channel["IFES1u"].result["Q"] ));
-  h2[ 6]->Fill(t3,(wave.channel["IFES2d"].result["Q"] ));
-  h2[ 7]->Fill(t4,(wave.channel["IFES2u"].result["Q"] ));
+  // h2[ 4]->Fill(t1,(wave.channel["IFES1d"].result["Q"] ));
+  // h2[ 5]->Fill(t2,(wave.channel["IFES1u"].result["Q"] ));
+  // h2[ 6]->Fill(t3,(wave.channel["IFES2d"].result["Q"] ));
+  // h2[ 7]->Fill(t4,(wave.channel["IFES2u"].result["Q"] ));
 
-  h2[ 8]->Fill(t1,(wave.channel["IFES1d"].result["A"] ));
-  h2[ 9]->Fill(t2,(wave.channel["IFES1u"].result["A"] ));
-  h2[10]->Fill(t3,(wave.channel["IFES2d"].result["A"] ));
-  h2[11]->Fill(t4,(wave.channel["IFES2u"].result["A"] ));
+  // h2[ 8]->Fill(t1,(wave.channel["IFES1d"].result["A"] ));
+  // h2[ 9]->Fill(t2,(wave.channel["IFES1u"].result["A"] ));
+  // h2[10]->Fill(t3,(wave.channel["IFES2d"].result["A"] ));
+  // h2[11]->Fill(t4,(wave.channel["IFES2u"].result["A"] ));
 
-  h2[12]->Fill(t1,t2);
-  h2[13]->Fill(t3,t4);
-  h2[14]->Fill((t1+t2)/2,(t3+t4)/2);
+  // h2[12]->Fill(t1,t2);
+  // h2[13]->Fill(t3,t4);
+  // h2[14]->Fill((t1+t2)/2,(t3+t4)/2);
 
-  h2[15]->Fill((wave.channel["IFES1d"].result["Q"] + wave.channel["IFES1u"].result["Q"])/2,(wave.channel["IFES1d"].result["A"] + wave.channel["IFES1u"].result["A"])/2);
+  // h2[15]->Fill((wave.channel["IFES1d"].result["Q"] + wave.channel["IFES1u"].result["Q"])/2,(wave.channel["IFES1d"].result["A"] + wave.channel["IFES1u"].result["A"])/2);
   // for(int i=0; i<1024; i++){
   //     for(auto a : wave.channel){
   // 	std::cout << a.second.V[i] << " ";
@@ -216,6 +228,13 @@ void processDemo::Print(){
   c1->Print("h3A.pdf");
   h3[1]->GetQuantiles(5,q2,q);
   std::cout << "Amplitude: " << q2[0] << " " << q2[1] << " " << q2[2] << " " << q2[3] << " " << q2[4] << " " << std::endl;
+
+  c1->Divide(2,2,0,0);
+  for(int l=0; l<4; l++){
+    c1->cd(l+1);
+    h4[l]->Draw("COLZ");
+  }
+  c1->Print("ToTvsQ.pdf");
 }
 
 void processDemo::subtractBaseLine(SMIWaveformAnalyzer &wave){
@@ -227,10 +246,17 @@ void processDemo::subtractBaseLine(SMIWaveformAnalyzer &wave){
 }
 
 void processDemo::printEvent(SMIWaveformAnalyzer &wave){
+  static int count = 0;
+  char tmp[128];
+  sprintf(tmp,"wv-%i.dat",count++);
+  ofile.open(tmp);
   for(int i=0; i<1024; i++){
+  ofile<< wave.channel.begin()->second.t[i] << " ";
     for(auto it : wave.channel){
-      std::cout << it.second.V[i] << " ";
+      ofile << it.second.V[i] << " ";
     }
-    std::cout << std::endl;
+    ofile << std::endl;
   }
+  ofile.close();
+  ofile.clear();
 }
