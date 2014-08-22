@@ -114,7 +114,7 @@ void processOneBar::operator()(SMIWaveformAnalyzer &wave){
   h[ 8]->Fill((q1-q2)/(q1+q2));
   h[ 9]->Fill((q1)/(q1+q2));
 
-  //printEvent(wave);
+  printEvent(wave);
   event++;
 }
 

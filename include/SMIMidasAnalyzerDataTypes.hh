@@ -1,9 +1,12 @@
 #ifndef __SMIMIDASANALYZERDATATYPES_HH__
 #define __SMIMIDASANALYZERDATATYPES_HH__
 
-typedef unsigned long int  DWORD;
-typedef unsigned short int WORD;
-typedef long int INT;
+#include <stdint.h>
+
+typedef uint32_t  DWORD;
+typedef uint16_t WORD;
+typedef int32_t INT;
+
 
 #if __cplusplus >= 201103L
 #include<cstdint>
@@ -57,7 +60,7 @@ namespace V1742 {
   void ApplyDataCorrection(V1742_DataCorrection_t* CTable, 
 			   uint32_t frequency, int CorrectionLevelMask, 
 			   struct sgheader *header, double **cdata);
-
+  void decodeADCData();
 }
 
 #endif

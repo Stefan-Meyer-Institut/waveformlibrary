@@ -1,6 +1,6 @@
 
 #include"SMIROOTfileAnalyzer.hh"
-#include"SMIMidasAnalyzer2012.hh"
+#include"SMIMidasAnalyzer2014.hh"
 #include"SMIWaveformAnalyzerPluginSystem.hh"
 #include"SMIWaveformAnalyzerProcessSystem.hh"
 
@@ -21,11 +21,11 @@
 int main(int argc, char *argv[]){
 
   TMidasFile f;
-  f.Open("run00001.mid");
+  f.Open("run00061.mid");
   //f.Open("../test1/run00029.mid");
-  SMIMidasAnalyzer2012 analyzer("midasconfigexample.conf");
+  SMIMidasAnalyzer2014 analyzer("midasconfigexample.conf");
   analyzer.setADCRange(4095);
-  processOneBar demo;
+  //processOneBar demo;
   processCalculateBaseline test;
   while (1) {
     TMidasEvent event;
@@ -35,41 +35,30 @@ int main(int argc, char *argv[]){
     if ((eventId & 0xFFFF) == 0x8000)
       {
 	// begin run                                                                                                       
-	event.Print();
+	//event.Print();
       } else if ((eventId & 0xFFFF) == 0x8001){
-      event.Print();
+      //event.Print();
     } else {
       event.SetBankList();
-      if (eventId == 1) { // FADC
+      if (eventId == 20) { // correction data
 	//event.Print();
-	std::cout << "midas eventnumber: " << event.GetSerialNumber() << std::endl;
-	//if( event.GetSerialNumber() >= 20) break;
+	//std::cout << "midas eventnumber: " << event.GetSerialNumber() << std::endl;
+	//if( event.GetSerialNumber() >= 1) break;
+	analyzer.prepareCorrectionTables(event);
 	analyzer.prepareMidasEvent(event);
 	
-	//analyzer.loop(10,100,test); 
+	//analyzer.loop(demo); 
 	//std::cout << analyzer << std::endl;
 	//auto retval = test.getBaseline(analyzer);
 	//demo.setBaseLine(retval);
 	//analyzer.loop(10,100,demo);
-	analyzer.loop(3,100,demo);
-	analyzer.purgeEvents(100);
-	std::cout << analyzer << std::endl;
+	//analyzer.loop(3,100,demo);
+	//analyzer.purgeEvents(100);
+	//std::cout << analyzer << std::endl;
       }
     } 
   }
   f.Close();
-  demo.Print();
-    //SMIROOTfileAnalyzer analyzer("examples/rootfile/test.cfg");
-    //analyzer.addFile("scitil_2014jan_cosy_r077-000.root");
-
-
-  
-
-  /*  for(auto i : retval){
-    std::cout << i.first  << " " << i.second << std::endl;
-    }*/
-
-  //someOtherFunction f;
-  //analyzer.loop(0,10,f);
+  //demo.Print();
   return 0;
 }

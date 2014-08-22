@@ -112,12 +112,17 @@ namespace V1742 {
       size1  = header->ch_size/3;
 
       for (j=0;j<size1;j++) {
-	//printf("cdata[%i][%i] = %f \n",i,j,cdata[i][j] - CTable->cell[i][((st_ind+j) % 1024)]);                              
+	// 	printf("cdata[%i][%i] = %f \n",i,j,cdata[i][j] - CTable->cell[i][((st_ind+j) % 1024)]);     
+	
 	if (cellCorrection) cdata[i][j] -=  CTable->cell[i][((st_ind+j) % 1024)];
 	if (nsampleCorrection) cdata[i][j] -= CTable->nsample[i][j];
       }
+      // for (j=0;j<size1;j++) {
+      // 	printf("cdata[%i][%i] = %f \n",i,j,cdata[i][j]);
+      // } 
     }
-    //printf("starting PeakCorrection\n");                                                                                     
+    //printf("starting PeakCorrection\n");                                                 
+        
     if (cellCorrection) PeakCorrection(header,cdata);
     //printf("ending PeakCorrection\n");                                                                                       
     if (!timeCorrection) return;
@@ -127,6 +132,7 @@ namespace V1742 {
 
     for(j=1; j < 1024; j++) {
       t0= CTable->time[(st_ind+j)%1024]-t0;
+      // printf("T0=%f time=%f\n",t0, CTable->time[(st_ind+j)%1024]);
       if  (t0 >0)
 	Time[j] =  Time[j-1]+ t0;
       else
@@ -144,12 +150,20 @@ namespace V1742 {
       for(i=1; i<1024; i++)  {
 	while ((k<1024-1) && (Time[k]<(i*Tsamp)))  k++;
 	vcorr =(((float)(cdata[j][k] - cdata[j][k-1])/(Time[k]-Time[k-1]))*((i*Tsamp)-Time[k-1]));
+	// printf("k= %i vcorr= %f cdata[j][k]=%f cdata[j][k-1]=%f\n",k, vcorr, cdata[j][k],  cdata[j][k-1]);
 	wave_tmp[i]= cdata[j][k-1] + vcorr;
 	k--;
+	// printf("wave_tmp[%i]= %f\n",i,wave_tmp[i] );
       }
+      
       memcpy(cdata[j],wave_tmp,1024*sizeof(double));
+      // for (i=0;i<size1;i++) {
+      //  	printf("cdata[%i][%i] = %f \n",j,i,cdata[j][i]);
+      // }
+      
     }
 
   }
+
 
 }
