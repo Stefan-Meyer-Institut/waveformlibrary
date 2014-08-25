@@ -1,4 +1,3 @@
-
 #include"SMIROOTfileAnalyzer.hh"
 #include"SMIMidasAnalyzer2014.hh"
 #include"SMIWaveformAnalyzerPluginSystem.hh"
@@ -25,8 +24,7 @@ int main(int argc, char *argv[]){
   //f.Open("../test1/run00029.mid");
   SMIMidasAnalyzer2014 analyzer("midasconfigexample.conf");
   analyzer.setADCRange(4095);
-  //processOneBar demo;
-  processCalculateBaseline test;
+  processOneBar demo;
   while (1) {
     TMidasEvent event;
     if (!f.Read(&event))
@@ -40,21 +38,20 @@ int main(int argc, char *argv[]){
       //event.Print();
     } else {
       event.SetBankList();
+      if (eventId == 10) { // clock trigger data
+	if(!analyzer.prepareMidasEvent(event)) continue;
+	analyzer.loop(demo); 
+	std::cout << analyzer << std::endl;
+      }
       if (eventId == 20) { // correction data
 	//event.Print();
 	//std::cout << "midas eventnumber: " << event.GetSerialNumber() << std::endl;
-	//if( event.GetSerialNumber() >= 1) break;
+	if( event.GetSerialNumber() >= 1) continue;
 	analyzer.prepareCorrectionTables(event);
-	analyzer.prepareMidasEvent(event);
+	if(!analyzer.prepareMidasEvent(event)) continue;
 	
-	//analyzer.loop(demo); 
-	//std::cout << analyzer << std::endl;
-	//auto retval = test.getBaseline(analyzer);
-	//demo.setBaseLine(retval);
-	//analyzer.loop(10,100,demo);
-	//analyzer.loop(3,100,demo);
-	//analyzer.purgeEvents(100);
-	//std::cout << analyzer << std::endl;
+	analyzer.loop(demo); 
+	
       }
     } 
   }

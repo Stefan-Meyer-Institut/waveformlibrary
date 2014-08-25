@@ -5,7 +5,7 @@
 
 namespace plugin {
 
-  //! this plugin removes the chattering from the channels
+  //! this plugin calculates the mean values within a given gate
   /*! 
     calculates the mean value of all entries within the gate, assuming a
     standard normal distribution an maximum likelihood error estimate is given. 

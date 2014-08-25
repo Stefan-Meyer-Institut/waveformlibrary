@@ -73,6 +73,7 @@ bool SMIMidasAnalyzer2014::readConfigFile(std::string configfile){
 }
 
 bool SMIMidasAnalyzer2014::prepareMidasEvent(TMidasEvent &event){
+  if(!tablesLoaded) return false;
   bool retVal = true;
   for(std::vector<std::string>::iterator i=adcBankList.begin();
       i!=adcBankList.end(); i++) {

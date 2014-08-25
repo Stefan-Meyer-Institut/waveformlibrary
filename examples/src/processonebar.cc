@@ -7,7 +7,7 @@
 #include"plugins/leadingEdgeBasic.hh"
 #include"plugins/calculateCharge.hh"
 #include"plugins/constantFractionLinear.hh"
-#include"plugins/subtractBaseLine.hh"
+#include"plugins/subtractLinearBaseLine.hh"
 
 //stl
 #include<iostream>
@@ -16,7 +16,7 @@
 processOneBar::processOneBar() : event(0), h(NULL), h2(NULL) {
   //list.add(new plugin::cleanWaveForm          );
   list.add(new plugin::changeADCRange(1/4095.));
-  //list.add(new plugin::subtractBaseLine());
+  list.add(new plugin::subtractLinearBaseLine());
   list.add(new plugin::leadingEdgeLinear(40,200,0.05)   );
   list.add(new plugin::calculateCharge(40,200)      );
   list.add(new plugin::constantFractionLinear());
@@ -90,31 +90,6 @@ void processOneBar::operator()(SMIWaveformAnalyzer &wave){
   wave.processAll(list);
   printEvent(wave);
   
-  double qscalefactor1d = 15.56/12.26;
-  double qscalefactor1u = 15.56/15.09;
-  double qscalefactor2d = 15.56/17.14;
-  // wave.channel["IFES1d"].result["Q"] *= qscalefactor1d;
-  // wave.channel["IFES1u"].result["Q"] *= qscalefactor1u;
-  // wave.channel["IFES2d"].result["Q"] *= qscalefactor2d;
-
-  qscalefactor1d = 0.2224/0.1858;
-  qscalefactor1u = 0.2224/0.2287;
-  qscalefactor2d = 0.2224/0.257;
-
-  // wave.channel["IFES1d"].result["A"] *= qscalefactor1d;
-  // wave.channel["IFES1u"].result["A"] *= qscalefactor1u;
-  // wave.channel["IFES2d"].result["A"] *= qscalefactor2d;
-
-  double q1 = wave.channel["TopR"].result["Q"]*1.2;
-  double q2 = wave.channel["TopL"].result["Q"];
-
-  h[ 0]->Fill(q1);
-  h[ 1]->Fill(q2);
-
-  h[ 8]->Fill((q1-q2)/(q1+q2));
-  h[ 9]->Fill((q1)/(q1+q2));
-
-  printEvent(wave);
   event++;
 }
 
