@@ -56,12 +56,14 @@ bool SMIMidasAnalyzer2014::readConfigFile(std::string configfile){
 	sprintf(buf,"A%X%i%i",adcNum, groupNum, channelNum);
 	renameChannel(chnames[buf], nameScheme);
 	channel[nameScheme].pulseType = pulse;
+	chnames[buf] = nameScheme;
       } else  if(command == "T"){ // trigger
 	ifile >> adcNum >> groupNum >> nameScheme >> pulse;
 	char buf[5];
 	sprintf(buf,"A%X%iT",adcNum, groupNum);
 	renameTrigger(chnames[buf], nameScheme);
 	trigger[nameScheme].pulseType = pulse;
+	chnames[buf] = nameScheme;
       } else { // ignore
 	ifile.getline(line,255);
       } 
