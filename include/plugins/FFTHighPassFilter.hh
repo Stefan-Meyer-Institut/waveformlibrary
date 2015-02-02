@@ -5,7 +5,7 @@
 
 namespace plugin {
   namespace FFT {
-    //! add a lowpass filter to an FFT plugin
+    //! add a highpass filter to an FFT plugin
     /*!
       performs a simple FFT highpass filter by removing all frequencies 
       below a cut off

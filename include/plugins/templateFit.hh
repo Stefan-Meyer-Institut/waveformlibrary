@@ -118,7 +118,7 @@ namespace plugin {
       store time offset in 'LEtime' and amplitude in 'A', if F-test failed or
       the fit didn't converge store -999999 in 'A'.
 
-      @param converged  did the fit converge
+      @param converged  did the fit converge?
       @param fTest is a valid signal present
       @param par fitting parameters
       @wave waveform class, is modified to hold the fit function and the results are stored within SMIWave::result
