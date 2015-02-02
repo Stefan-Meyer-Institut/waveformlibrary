@@ -19,7 +19,10 @@ namespace plugin {
   public: 
     //! constructor requires number of entries in waveform
     FFTFilterWaveForm(Int_t nDim);
+
+    //! destructor
     ~FFTFilterWaveForm();
+
     //! operator to execute the plugin
     /*!
       @param wave waveform to operate on
@@ -36,8 +39,8 @@ namespace plugin {
   private:
     TVirtualFFT *fft_forward;                        //!< make FFT
     TVirtualFFT *fft_backward;                       //!< perform back transformation
-    double *valsReal;
-    double *valsComp;
+    double *valsReal;                                //!< intermediate storage for real values
+    double *valsComp;                                //!< intermediate storage for imaginary values
     
     std::vector<SMIAnalyzerPluginBase *> fftPlugins; //!< plugin container
   };
