@@ -8,7 +8,7 @@
 #include"plugins/calculateCharge.hh"
 #include"plugins/constantFractionLinear.hh"
 #include"plugins/subtractBaseLine.hh"
-
+#include"plugins/templateFit.hh"
 //stl
 #include<iostream>
 
@@ -20,6 +20,7 @@ processDemo::processDemo() : event(0), h(NULL), h2(NULL) {
   list.add(new plugin::leadingEdgeLinear(40,200,0.05)   );
   list.add(new plugin::calculateCharge(40,200)      );
   list.add(new plugin::constantFractionLinear());
+  list.add(new plugin::templateFit("ASD", 0 ,10));
 
   h = new TH1D*[16];
   h[ 0] = new TH1D("","",200,0,80);

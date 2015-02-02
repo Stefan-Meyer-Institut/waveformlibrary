@@ -81,7 +81,6 @@ bool SMIMidasAnalyzer2014::prepareMidasEvent(TMidasEvent &event){
       i!=adcBankList.end(); i++) {
     DWORD *data = NULL;
     int c = event.LocateBank(NULL, i->c_str(), (void**)&data);
-   
     if(c==0 || data == NULL){
       retVal = false;
       return retVal;
@@ -288,6 +287,7 @@ void SMIMidasAnalyzer2014::decodeADCData(DWORD *data, unsigned int ADCnum){
 	    |                  (((tempData[2] >>  0) & 0x0ff)) << 4;
 	  trigger[trg].V[i+6] =  (tempData[2] >>  8) & 0xfff;
 	  trigger[trg].V[i+7] =  (tempData[2] >> 20) & 0xfff;
+
 	}
     }
     // now assemble groupdata for applying correction tables
@@ -316,7 +316,7 @@ void SMIMidasAnalyzer2014::decodeADCData(DWORD *data, unsigned int ADCnum){
     			&groupHeader, cdata);
 
   } // group loop end
-
+  changeTime(0.2);
 }
 
 void SMIMidasAnalyzer2014::prepareADCBuffers(unsigned int adcNum, std::string nameScheme, int pulse){
@@ -338,7 +338,7 @@ void SMIMidasAnalyzer2014::prepareADCBuffers(unsigned int adcNum, std::string na
       addChannelTrigger(chnames[name],chnames[trigName]);
       channel[chnames[name]].pulseType = pulse;
     }
-    trigger[chnames[trigName]].pulseType = pulse;
+    trigger[chnames[trigName]].pulseType = -pulse;
 
   } // group loop end
 }

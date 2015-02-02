@@ -6,10 +6,10 @@ libname = libwaveformanalyzer
 staticlib = $(libdir)$(libname).a
 dynamiclib = $(libdir)$(libname).so
 
-#CXX = g++
-CXX = clang++
+CXX = g++
+#CXX = clang++
 AR = ar
-CXXFLAGS = -m64 -I./include/ -I./ -O3 -g -Wall -pedantic -fPIC --std=c++11
+CXXFLAGS = --std=c++11 -m64 -I./include/ -I./ -O3 -g -Wall -fPIC 
 
 DOXY := doxygen
 DOXYFILES := $(wildcard ./src/*.cc, ./include/*.hh)
@@ -21,7 +21,8 @@ ifdef ROOTSYS
 endif
 
 # ROOTANA library for MIDAS
-rootanabase = /home/clemens/physicspackages/rootana
+#rootanabase = /phys/midas/rootana
+rootanabase = /home/clemens/physicspackages/rootana/
 rootanalib = $(rootanabase)/lib/librootana.a
 rootanainclude = -I$(rootanabase)/include
 CXXFLAGS += -D__HAVEMIDAS $(rootanainclude)

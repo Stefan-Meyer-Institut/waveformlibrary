@@ -6,6 +6,7 @@
 #include<cstdio>
 #include<algorithm>
 #include<iostream>
+#include<cmath>
 
 bool SMIMidasAnalyzer2012::loop(size_t start, size_t num, processBase &func){
   size_t end=start+num;

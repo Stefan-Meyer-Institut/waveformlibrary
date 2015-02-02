@@ -28,6 +28,7 @@ public:
    */
   WaveForm() : V(1024,0.0), t(1024,0.0), dT(0.2), pulseType(-1) {
     for(size_t i=0; i<t.size(); i++) t[i] = i*0.2; // [ns] 1 bin = 200 ps
+    for(size_t i=0; i<t.size(); i++) V[i] = i*0.0; // [ns] 1 bin = 200 ps
   }
 
   //! change the time axis bin width
