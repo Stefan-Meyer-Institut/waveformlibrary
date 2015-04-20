@@ -48,9 +48,11 @@ namespace plugin {
       x1 = x1-(f/fprime);
 
       f = sumwave.interpolate(x1);
-      // std::cout << "new pos: " << x1;
-      // std::cout << " value: " << sumwave.interpolate(x1) << std::endl;;
-      // std::cout << std::abs(x2-x1) << " " << f << std::endl;
+      //std::cout << "new pos: " << x1;
+      //std::cout << " value: " << sumwave.interpolate(x1) << std::endl;;
+      //std::cout << std::abs(x2-x1) << " " << f << std::endl;
+      //std::cout << "retval = " << " " << x2 << std::endl;
+      
       counter++;
       if(counter > 100) return -999999;
       

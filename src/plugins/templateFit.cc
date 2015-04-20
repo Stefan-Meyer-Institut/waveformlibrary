@@ -13,6 +13,7 @@ namespace plugin {
   bool templateFit::operator()(WaveForm &wave){
     currentData = &wave;
 
+    //std::cout << "Maximum - Minimum: " << *std::max_element(currentData->V.begin(),currentData->V.end())-*std::min_element(currentData->V.begin(),currentData->V.end()) << std::endl;
     // find starting values
     Double_t par[3] = {0,0,0};
     guessStartingParameters(par,wave);
@@ -24,9 +25,12 @@ namespace plugin {
     // 	      << par[1] << " "  << par[2] << " " << std::endl; 
 
     // perform F-Test
-    bool fTest     = makeFTest(par);
+    //bool fTest     = makeFTest(par);
+    bool rTest     = makeGoodnessOfFit(par);
 
-    bool retVal    = produceOutput(converged, fTest, par, wave);
+    //if(converged) std::cout << "FIT CONVERGED" << std::endl;
+    //if(rTest)     std::cout << "R-TEST PASSED" << std::endl;
+    bool retVal    = produceOutput(converged, rTest, par, wave);
    
 
     currentData = NULL;
@@ -42,6 +46,9 @@ namespace plugin {
   // par[2] baseline
   double templateFit::errorFunction(const Double_t *par){
     if(currentData == NULL) return -1;
+    if(calcLowBound)
+      fitLowBound = currentData->t[0];
+
     WaveForm tmp = templFunc*par[1] + par[2];
     tmp.shiftTime(par[0]);
     tmp = (*currentData - tmp);
@@ -89,7 +96,21 @@ namespace plugin {
   }
 
   bool templateFit::fitData(Double_t *par){
-    static Double_t step[7] = {0.001, 0.001, 0.001};
+    if(currentData == NULL) return false;
+    // check if result is in range
+    if(calcLowBound)
+      fitLowBound = currentData->t[0];
+    
+    if(par[0]  < fitLowBound || par[0]  > fitHighBound) return false;
+    if( *std::max_element(currentData->V.begin(),currentData->V.end())-*std::min_element(currentData->V.begin(),currentData->V.end()) < 0.01) return false;
+
+    static Double_t step[7] = {0.001, 0.01, 0.01};
+
+    /*std::cout << "START:" << std::endl
+	      << "tOFF: " << par[0] << std::endl
+	      << "ampl: " << par[1] << std::endl
+	      << "base: " << par[2] << std::endl;*/
+
     minimiser.SetVariable(0, "tOff",      par[0], step[0]);
     minimiser.SetVariable(1, "amplitude", par[1], step[1]);
     minimiser.SetVariable(2, "baseline",  par[2], step[2]);
@@ -99,15 +120,73 @@ namespace plugin {
     Int_t status = minimiser.Status();
     // std::cout << "STATUS: "<< status << std::endl; 
     if(!retVal || status==1) retVal = true; // status 1 means errors are not relyable 
+
     const Double_t* ret = minimiser.X();
+
+    /*std::cout << "END:" << std::endl
+	      << "tOFF: " << ret[0] << std::endl
+	      << "ampl: " << ret[1] << std::endl
+	      << "base: " << ret[2] << std::endl;
+    */
     if (retVal)
       std::memcpy(par, ret, 3*sizeof(Double_t));
     return retVal;
   }
 
+  bool templateFit::makeGoodnessOfFit(Double_t *par){
+    if(currentData == NULL) return false;
+    // check if result is in range
+    if(calcLowBound)
+      fitLowBound = currentData->t[0];
+    
+    if(par[0]  < fitLowBound || par[0]  > fitHighBound) return false;
+   
+    double SSres  = 0;
+    double totErr = 0;
+
+    WaveForm fit = templFunc*par[1] + par[2];
+    fit.shiftTime(par[0]);
+    fit = *currentData-fit;
+
+    size_t size = 0;
+    double mean     = 0;
+    for(size_t i=0; i<currentData->V.size(); i++){
+      if(currentData->t[i] < fitLowBound || currentData->t[i]  > fitHighBound) continue;
+      size++;
+      mean += currentData->V[i];
+    }
+    mean /= size;
+
+    for(size_t i=0; i<currentData->V.size(); i++){
+      //if(currentData->t[i] < fitLowBound || currentData->t[i]  > fitHighBound) continue;
+      size++;
+      SSres  += fit.V[i]*fit.V[i];
+      totErr += (currentData->V[i]-mean)*(currentData->V[i]-mean);
+    }
+
+    //std::cout << SSres << " " << totErr << std::endl;
+
+    double Rsquare = 1 - SSres/totErr;
+    double S       = std::sqrt(SSres/(size-1));
+
+    
+    //std::cout << Rsquare << " " << S << " " << par[1] << " ";
+    if (Rsquare > 0.5 && S < 0.1 && par[1]>0.01){
+      //std::cout << "TRUE" << std::endl;
+      return true;
+    }
+    else {
+      //std::cout << "FALSE" << std::endl;
+      return false;    
+    }
+  }
+
   bool templateFit::makeFTest(Double_t *par){
     if(currentData == NULL) return false;
     // check if result is in range
+    if(calcLowBound)
+      fitLowBound = currentData->t[0];
+
     if(par[0]  < fitLowBound || par[0]  > fitHighBound) return false;
     
     // just a simple line
@@ -136,9 +215,12 @@ namespace plugin {
     }
 
     // performing the F-Test
-    double F = ( (chi2line-chi2fit)/2 ) / ( (chi2fit)/(size-3) );
-    double p = TMath::FDistI(F,2,size-3);
-
+    if(chi2fit > chi2line) return false;
+    double F = ( (chi2line-chi2fit)/2 ) / ( (chi2fit)/(1024-3) );
+    double p = TMath::FDistI(F,2,1024-3);
+    std::cout << chi2line << " " << chi2fit << std::endl;
+    std::cout << "F-VALUE: " << F << std::endl; 
+    std::cout << "P-VALUE: " << p << std::endl; 
     // probability to falsely reject is 0.5%, 
     if(p>0.005) return true;
     else        return false;
@@ -152,7 +234,7 @@ namespace plugin {
 
 	// replace measured signal with theoretical one with baseline set to 0
 	wave = templFunc*par[1];
-
+	wave.shiftTime(par[0]);
 	// restore old results
 	wave.result           = resultOld;
 	

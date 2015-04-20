@@ -33,7 +33,22 @@ namespace plugin {
       @param fitHigh high bound of the fit on x axis
      */
     templateFit(std::string templatePath, double fitLow, double fitHigh):
-      fitBase(fitLow, fitHigh, 3), currentData(NULL)
+      fitBase(fitLow, fitHigh, 3), currentData(NULL), calcLowBound(false)
+    {
+      readWaveformTemplate(templatePath);
+    }
+
+    //! constructor
+    /*!
+      reads the waveform template and prepares it for fitting
+      lower time fit bound is calculated from waveform
+
+      @param templatePath path to the text file that contains the template
+      @param fitHigh high bound of the fit on x axis
+     */
+
+    templateFit(std::string templatePath, double fitHigh):
+      fitBase(-1, fitHigh, 3), currentData(NULL), calcLowBound(true)
     {
       readWaveformTemplate(templatePath);
     }
@@ -113,6 +128,14 @@ namespace plugin {
      */
     bool makeFTest(Double_t *par);
 
+    //! Test goodness of fit with the coefficient of determination
+    /*!
+      
+     */
+    bool makeGoodnessOfFit(Double_t *par);
+
+
+
     //! store fit without baseline in wave and store parameters in dictonary
     /*!
       store time offset in 'LEtime' and amplitude in 'A', if F-test failed or
@@ -127,6 +150,7 @@ namespace plugin {
 
     WaveForm  templFunc;   //!< stores the wavefrom template
     WaveForm *currentData; //!< pointer to the current data, required for fitting
+    bool calcLowBound;
   };
 
 }

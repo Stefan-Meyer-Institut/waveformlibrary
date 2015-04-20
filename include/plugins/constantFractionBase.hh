@@ -6,7 +6,7 @@
 namespace plugin {
   class constantFractionBase : public SMIAnalyzerPluginBase {
   public:
-    constantFractionBase() : delay(-3) {}
+    constantFractionBase() : delay(4) {}
     virtual bool operator()(WaveForm &wave);
 
   protected:

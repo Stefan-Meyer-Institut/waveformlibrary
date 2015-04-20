@@ -25,12 +25,14 @@ namespace plugin {
       @param NDF number of degrees of freedom for the fit
      */
     fitBase(double fitLow, double fitHigh, Int_t NDF)
-    //: minimiser   (          ROOT::Minuit2::kMigrad), 
-      : minimiser   (          ROOT::Minuit2::kCombined), 
+      : minimiser   (          ROOT::Minuit2::kMigrad), 
+    //: minimiser   (          ROOT::Minuit2::kCombined), 
+    //: minimiser   (          ROOT::Minuit2::kSimplex), 
 	errorFunctor(this, &fitBase::errorFunction, NDF)
     {
       fitLowBound  = fitLow;
       fitHighBound = fitHigh;
+      minimiser.SetTolerance(0.001);
       minimiser.SetFunction(errorFunctor);
     }
 
