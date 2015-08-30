@@ -65,6 +65,7 @@ public:
   //! return the eventnumber from the waveform digitiser
   inline int getEventNum()     const {return eventnum; } 
 
+  //! return the value of an attribute
   inline double getAttribute(std::string name) {return attributes[name];}
 
 //! simple output operator
