@@ -26,8 +26,7 @@ public:
   number and the time stamp to 0 and the number of bins in one 
   waveform to 1024
  */
-  SMIWaveformBase() : signalPattern(0), eventnum(0), timestamp(0), 
-		      nEntries(1024) {}
+  SMIWaveformBase() : signalPattern(0), eventnum(0), nEntries(1024) {}
 
 //! renames a channel
 /*!
@@ -64,11 +63,9 @@ public:
   bool addChannelTrigger(std::string channel, std::string trigger);
 
   //! return the eventnumber from the waveform digitiser
-  inline int getEventNum()    const {return eventnum; }
-  
-  //! return the trigger time tag from the waveform digitiser
-  inline int getTriggerTime() const {return timestamp;}
+  inline int getEventNum()     const {return eventnum; } 
 
+  inline double getAttribute(std::string name) {return attributes[name];}
 
 //! simple output operator
 /*!
@@ -82,6 +79,7 @@ public:
   std::map<std::string, WaveForm>                  trigger;        //!< trigger database
   std::map<std::string, std::string>               channeltrigger; //!< mapping of channels to triggers
   std::map<std::string, std::vector<std::string> > triggerchannel; //!< mapping of triggers to channels
+
 
 //! returns a reference to a Waveform with Name
 /*!
@@ -115,9 +113,11 @@ protected:
 
   unsigned int signalPattern; //!< signal pattern of the V1742 waveform digitiser
   int          eventnum;      //!< eventnumber   
-  unsigned int timestamp;     //!< event time stamp
-
+  int          timestamp;
   size_t       nEntries;      //!< number of bins per waveform
+
+  std::map<std::string, double> attributes;                        //!< additional data for the event
+
 };
 
 #endif
